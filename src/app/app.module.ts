@@ -12,7 +12,7 @@ import { MaterialModule } from './material.module';
 import { PlayerComponent } from './pages/player/player.component';
 
 @NgModule({
-  declarations: [AppComponent, AuthButtonsComponent, PlayerComponent],
+  declarations: [AppComponent, AuthButtonsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
