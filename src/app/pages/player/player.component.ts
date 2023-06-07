@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AudioStream, StreamState } from 'rxjs-audio';
 
 @Component({
   selector: 'app-player',
@@ -6,12 +7,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent {
-  files: Array<any> = [
-    { name: "First Song", artist: "Inder" },
-    { name: "Second Song", artist: "You" }
-  ];
-  state:any;
-  currentFile: any = {};
+  audio:AudioStream = new AudioStream();
+  state:StreamState = {playing:false, trackInfo:{currentTrack:0, duration:0, currentTime:0}};
+
+  constructor(){
+    this.audio.loadTrack('../../../assets/SABLE_132_F_Vibes_4_Percussion_132BPM_Fmajor_BANDLAB.wav');
+
+    this.audio.getState()
+      .subscribe(state => {
+          this.state = state;
+      });
+  }
 
   isFirstPlaying() {
     return false;
@@ -22,5 +28,11 @@ export class PlayerComponent {
 
   onSliderChangeEnd(event:any){}
 
-  play(){} pause(){} previous(){} next(){}
+  play(){
+    this.audio.play();
+  }
+
+  pause(){
+    this.audio.pause();
+  }
 }

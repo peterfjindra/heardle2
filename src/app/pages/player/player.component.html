@@ -23,23 +23,19 @@
   <div class="media-footer">
     <mat-toolbar color="primary">
       <mat-toolbar-row>
-         {{ state?.readableCurrentTime }}
-         <mat-slider class="time-slider" min="0" [max]="state?.duration" step="1"  value="state?.currentTime" (input)="onSliderChangeEnd($event)" [disabled]="state?.error || currentFile.index === undefined"></mat-slider>
-         {{ state?.readableDuration }}
+         {{ state.trackInfo.currentTime }}
+         <mat-slider class="time-slider" min="0" [max]="state.trackInfo.duration" step="1"  value="state?.currentTime" (input)="onSliderChangeEnd($event)"></mat-slider>
+         {{ state.trackInfo.duration }}
       </mat-toolbar-row>
       <mat-toolbar-row class="media-action-bar">
-        <button mat-button [disabled]="isFirstPlaying()" (click)="previous()">
-          <mat-icon mat-list-icon>skip_previous</mat-icon>
-        </button>
-        <button mat-button (click)="play()" [disabled]="state?.error" *ngIf="!state?.playing">
+
+        <button mat-button (click)="play()" *ngIf="!state?.playing">
           <mat-icon mat-list-icon>play_circle_filled</mat-icon>
         </button>
         <button mat-button (click)="pause()" *ngIf="state?.playing">
           <mat-icon mat-list-icon>pause</mat-icon>
         </button>
-        <button  mat-button [disabled]="isLastPlaying()" (click)="next()">
-          <mat-icon mat-list-icon>skip_next</mat-icon>
-        </button>
+
       </mat-toolbar-row>
     </mat-toolbar>
   </div>
