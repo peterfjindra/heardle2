@@ -1,37 +1,36 @@
 <!-- src/app/pages/player/player.component.html -->
 <div class="container">
+
+  <div id="embed-iframe"></div>
+
   <mat-toolbar color="primary" class="main-toolbar">
     <span>Audio Player</span>
   </mat-toolbar>
   <div class="content">
-      <div class="logo">
-        <mat-icon>music_note</mat-icon>
-        <div>Audio Player</div>
+    <div class="logo">
+      <mat-icon>music_note</mat-icon>
+      <div>Audio Player</div>
     </div>
-    <!-- <mat-list color="primary">
-      <h3 mat-subheader>Songs</h3>
-      <mat-list-item *ngFor="let file of files; let i = index" (click)="openFile(file, i)">
-        <mat-icon color="primary" mat-list-icon>music_note</mat-icon>
-        <h4 mat-line>{{ file.name }}</h4>
-        <h5 mat-line>by {{ file.artist }}</h5>
-        <mat-icon color="primary" *ngIf="currentFile.index === i && !state?.error">volume_up</mat-icon>
-        <h6 *ngIf="currentFile.index === i && state?.error">ERROR</h6>
-        <mat-divider></mat-divider>
-      </mat-list-item>
-    </mat-list> -->
   </div>
   <div class="media-footer">
     <mat-toolbar color="primary">
       <mat-toolbar-row>
-         {{ state.trackInfo.currentTime }}
-         <mat-slider class="time-slider" min="0" [max]="state.trackInfo.duration" step="1"  value="state?.currentTime" (input)="onSliderChangeEnd($event)"></mat-slider>
-         {{ state.trackInfo.duration }}
+        {{ state.trackInfo.currentTime }}
+        <mat-slider class="time-slider" min="0" [max]="state.trackInfo.duration" step="1" value="state?.currentTime"
+          (input)="onSliderChangeEnd($event)"></mat-slider>
+        {{ state.trackInfo.duration }}
       </mat-toolbar-row>
       <mat-toolbar-row class="media-action-bar">
 
         <button mat-button (click)="play()" *ngIf="!state?.playing">
+
           <mat-icon mat-list-icon>play_circle_filled</mat-icon>
         </button>
+        <script>
+          function playClickHandler() {
+            EmbedController.play();
+          }
+        </script>
         <button mat-button (click)="pause()" *ngIf="state?.playing">
           <mat-icon mat-list-icon>pause</mat-icon>
         </button>

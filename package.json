@@ -24,6 +24,7 @@
     "@angular/router": "^15.2.0",
     "@auth0/auth0-angular": "^2.0.1",
     "@nrwl/angular": "15.7.2",
+    "@types/spotify-web-playback-sdk": "^0.1.15",
     "axios": "^1.3.4",
     "rxjs-audio": "^2.0.0",
     "tslib": "^2.3.0",
