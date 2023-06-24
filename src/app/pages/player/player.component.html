@@ -1,8 +1,6 @@
 <!-- src/app/pages/player/player.component.html -->
 <div class="container">
-
   <div id="embed-iframe"></div>
-
   <mat-toolbar color="primary" class="main-toolbar">
     <span>Audio Player</span>
   </mat-toolbar>
@@ -23,14 +21,9 @@
       <mat-toolbar-row class="media-action-bar">
 
         <button mat-button (click)="play()" *ngIf="!state?.playing">
-
           <mat-icon mat-list-icon>play_circle_filled</mat-icon>
         </button>
-        <script>
-          function playClickHandler() {
-            EmbedController.play();
-          }
-        </script>
+
         <button mat-button (click)="pause()" *ngIf="state?.playing">
           <mat-icon mat-list-icon>pause</mat-icon>
         </button>

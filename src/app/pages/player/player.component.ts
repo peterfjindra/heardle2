@@ -32,7 +32,9 @@ export class PlayerComponent {
     window.onSpotifyIframeApiReady = (IFrameAPI) => {
       const element = document.getElementById('embed-iframe');
       const options = {
-        uri: 'spotify:episode:7makk4oTQel546B0PZlDM5'
+        width: 0,
+        height: 0,
+        uri: 'spotify:track:2gEuEnvHdyZhRoXQiaoY1Y'
       };
       // @ts-ignore
       const callback = (EmbedController) => {
