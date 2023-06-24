@@ -34,11 +34,16 @@ export class PlayerComponent {
       const options = {
         width: 0,
         height: 0,
-        uri: 'spotify:track:2gEuEnvHdyZhRoXQiaoY1Y'
+        uri: 'spotify:track:3ri4y4r1BFc9YiPNgFXeGW'
       };
       // @ts-ignore
       const callback = (EmbedController) => {
+        EmbedController.addListener('ready', () => {
           EmbedController.play();
+          setTimeout(function () {
+            EmbedController.pause();
+          }, 5000);
+        });
       };
       IFrameAPI.createController(element, options, callback);
     };
