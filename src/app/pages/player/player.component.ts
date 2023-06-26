@@ -9,7 +9,8 @@ import { AudioStream, StreamState } from 'rxjs-audio';
 export class PlayerComponent {
   audio:AudioStream = new AudioStream();
   state:StreamState = {playing:false, trackInfo:{currentTrack:0, duration:0, currentTime:0}};
-  callback:any;
+  playerLoaded:boolean = false;
+  pleasePlay:boolean = false;
 
   constructor(){
     this.audio.loadTrack('http://open.spotify.com/embed/track/6rqhFgbbKwnb9MLmUQDhG6');
@@ -27,7 +28,6 @@ export class PlayerComponent {
       console.log(e);
     });
     document.head.appendChild(iFrameScript);
-    document.head.appendChild(iFrameScript);
     // @ts-ignore
     window.onSpotifyIframeApiReady = (IFrameAPI) => {
       const element = document.getElementById('embed-iframe');
@@ -38,14 +38,28 @@ export class PlayerComponent {
       };
       // @ts-ignore
       const callback = (EmbedController) => {
-        EmbedController.addListener('ready', () => {
-          EmbedController.play();
-          setTimeout(function () {
-            EmbedController.pause();
-          }, 5000);
-        });
+        // @ts-ignore
+        const timer = ms => new Promise(res => setTimeout(res, ms));
+
+        EmbedController.addListener('ready', async () => {
+          const load = async () => {
+            if(this.pleasePlay) {
+              EmbedController.play();
+              await timer(5000);
+              EmbedController.pause();
+              EmbedController.seek(0);
+              this.pleasePlay = false;
+            }
+            await timer(500);
+            load();
+          }
+
+          load();
+        })
       };
+
       IFrameAPI.createController(element, options, callback);
+      this.playerLoaded = true;
     };
   }
 
@@ -59,7 +73,10 @@ export class PlayerComponent {
   onSliderChangeEnd(event:any){}
 
   play(){
-    this.createIFrame();
+    this.pleasePlay = true;
+
+    if(!this.playerLoaded)
+      this.createIFrame();
   }
 
   pause(){
