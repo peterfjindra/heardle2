@@ -4,30 +4,22 @@
   <mat-toolbar color="primary" class="main-toolbar">
     <span>Audio Player</span>
   </mat-toolbar>
-  <div class="content">
-    <div class="logo">
-      <mat-icon>music_note</mat-icon>
-      <div>Audio Player</div>
-    </div>
-  </div>
   <div class="media-footer">
     <mat-toolbar color="primary">
-      <mat-toolbar-row>
-        {{ state.trackInfo.currentTime }}
-        <mat-slider class="time-slider" min="0" [max]="state.trackInfo.duration" step="1" value="state?.currentTime"
+      <!-- <mat-toolbar-row>
+        <span >{{ 0 }}</span>
+        <mat-slider class="time-slider" min="0" [max]="5" step="1"
           (input)="onSliderChangeEnd($event)"></mat-slider>
-        {{ state.trackInfo.duration }}
-      </mat-toolbar-row>
+        {{ 5 }}
+      </mat-toolbar-row> -->
       <mat-toolbar-row class="media-action-bar">
-
-        <button mat-button (click)="play()" *ngIf="!state?.playing">
+        <button mat-button (click)="play()" *ngIf="!playing">
           <mat-icon mat-list-icon>play_circle_filled</mat-icon>
         </button>
 
-        <button mat-button (click)="pause()" *ngIf="state?.playing">
+        <button mat-button (click)="pause()" *ngIf="playing">
           <mat-icon mat-list-icon>pause</mat-icon>
         </button>
-
       </mat-toolbar-row>
     </mat-toolbar>
   </div>

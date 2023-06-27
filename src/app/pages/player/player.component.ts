@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AudioStream, StreamState } from 'rxjs-audio';
+import { Observable, interval, of, take } from 'rxjs';
 
 @Component({
   selector: 'app-player',
@@ -8,17 +9,16 @@ import { AudioStream, StreamState } from 'rxjs-audio';
 })
 export class PlayerComponent {
   audio:AudioStream = new AudioStream();
-  state:StreamState = {playing:false, trackInfo:{currentTrack:0, duration:0, currentTime:0}};
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
+  playing = false;
+  currentTime = 0;
+  readableTime = 0;
 
   constructor(){
-    this.audio.loadTrack('http://open.spotify.com/embed/track/6rqhFgbbKwnb9MLmUQDhG6');
-
-    this.audio.getState()
-      .subscribe(state => {
-          this.state = state;
-      });
+    of(this.currentTime).subscribe((time) => {
+      this.readableTime = time;
+    })
   }
 
   createIFrame() {
@@ -41,13 +41,24 @@ export class PlayerComponent {
         // @ts-ignore
         const timer = ms => new Promise(res => setTimeout(res, ms));
 
+        // const updateTime = async (s:number) => {
+        //   for(let i = 0; i <= s; i++) {
+        //     await timer(1000);
+        //     this.updateCurrentTime();
+        //   }
+        // }
+
         EmbedController.addListener('ready', async () => {
           const load = async () => {
             if(this.pleasePlay) {
               EmbedController.play();
+              this.playing = true;
+
+              //await updateTime(10);
               await timer(5000);
               EmbedController.pause();
               EmbedController.seek(0);
+              this.playing = false;
               this.pleasePlay = false;
             }
             await timer(500);
@@ -63,13 +74,6 @@ export class PlayerComponent {
     };
   }
 
-  isFirstPlaying() {
-    return false;
-  }
-  isLastPlaying() {
-    return true;
-  }
-
   onSliderChangeEnd(event:any){}
 
   play(){
@@ -80,6 +84,9 @@ export class PlayerComponent {
   }
 
   pause(){
-    this.audio.pause();
+  }
+
+  updateCurrentTime(){
+    this.currentTime++;
   }
 }

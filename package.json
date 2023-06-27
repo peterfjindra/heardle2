@@ -26,6 +26,7 @@
     "@nrwl/angular": "15.7.2",
     "@types/spotify-web-playback-sdk": "^0.1.15",
     "axios": "^1.3.4",
+    "rxjs": "^7.8.1",
     "rxjs-audio": "^2.0.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"
