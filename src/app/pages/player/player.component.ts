@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { AudioStream } from 'rxjs-audio';
 
 @Component({
@@ -11,11 +11,11 @@ export class PlayerComponent {
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
   playing = false;
-  currentTime = 0;
+  currentTime = 1;
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
   currentGuess = 0;
 
-  constructor(){
+  constructor(private _ngZone: NgZone){
   }
 
   createIFrame() {
@@ -37,26 +37,32 @@ export class PlayerComponent {
       const callback = (EmbedController) => {
         // @ts-ignore
         const timer = ms => new Promise(res => setTimeout(res, ms));
+        const timer1000 = () => new Promise(res => setTimeout(res, 1000));
 
-        // const updateTime = async (s:number) => {
-        //   for(let i = 0; i <= s; i++) {
-        //     await timer(1000);
-        //     this.updateCurrentTime();
-        //   }
-        // }
 
         EmbedController.addListener('ready', async () => {
           const load = async () => {
             if(this.pleasePlay) {
               EmbedController.play();
-              this.playing = true;
 
-              //await updateTime(10);
-              await timer(this.GUESS_TIMES[this.currentGuess]);
+              this._ngZone.run(() => {
+                this.playing = true;
+              });
+
+              this.currentTime = this.GUESS_TIMES[this.currentGuess] / 1000;
+              for(let i = 0; i < this.GUESS_TIMES[this.currentGuess] / 1000; i++) {
+                await timer1000();
+                this._ngZone.run(() => {
+                  this.currentTime--;
+                });
+              }
+              this._ngZone.run(() => {
+                this.playing = false;
+                this.pleasePlay = false;
+              });
+
               EmbedController.pause();
               EmbedController.seek(0);
-              this.playing = false;
-              this.pleasePlay = false;
             }
             await timer(500);
             if(this.currentGuess < 6)
@@ -90,7 +96,9 @@ export class PlayerComponent {
   }
 
   guess(){
-    if(this.currentGuess < 6)
+    if(this.currentGuess < 6) {
       this.currentGuess++;
+      this.currentTime = this.GUESS_TIMES[this.currentGuess] / 1000;
+    }
   }
 }

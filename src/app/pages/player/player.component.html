@@ -8,6 +8,7 @@
   <p *ngIf="currentGuess <= 5">{{GUESS_TIMES[currentGuess] / 1000}} seconds. </p>
   <p>{{6 - currentGuess}} guesses remaining.</p>
   <p *ngIf="currentGuess > 5">Game Over</p>
+  <p>{{currentTime}}</p>
   <div class="media-footer">
     <mat-toolbar color="primary">
       <!-- <mat-toolbar-row>
