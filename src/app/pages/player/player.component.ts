@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { AudioStream, StreamState } from 'rxjs-audio';
-import { Observable, interval, of, take } from 'rxjs';
+import { AudioStream } from 'rxjs-audio';
 
 @Component({
   selector: 'app-player',
@@ -13,12 +12,10 @@ export class PlayerComponent {
   pleasePlay:boolean = false;
   playing = false;
   currentTime = 0;
-  readableTime = 0;
+  GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
+  currentGuess = 0;
 
   constructor(){
-    of(this.currentTime).subscribe((time) => {
-      this.readableTime = time;
-    })
   }
 
   createIFrame() {
@@ -55,14 +52,15 @@ export class PlayerComponent {
               this.playing = true;
 
               //await updateTime(10);
-              await timer(5000);
+              await timer(this.GUESS_TIMES[this.currentGuess]);
               EmbedController.pause();
               EmbedController.seek(0);
               this.playing = false;
               this.pleasePlay = false;
             }
             await timer(500);
-            load();
+            if(this.currentGuess < 6)
+              load();
           }
 
           load();
@@ -77,7 +75,8 @@ export class PlayerComponent {
   onSliderChangeEnd(event:any){}
 
   play(){
-    this.pleasePlay = true;
+    if(this.currentGuess < 6)
+      this.pleasePlay = true;
 
     if(!this.playerLoaded)
       this.createIFrame();
@@ -88,5 +87,10 @@ export class PlayerComponent {
 
   updateCurrentTime(){
     this.currentTime++;
+  }
+
+  guess(){
+    if(this.currentGuess < 6)
+      this.currentGuess++;
   }
 }
