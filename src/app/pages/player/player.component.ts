@@ -1,5 +1,7 @@
-import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { AudioStream } from 'rxjs-audio';
+import { Song } from 'src/app/shared/models/song';
+import { SongDataService } from './song-data.service';
 
 @Component({
   selector: 'app-player',
@@ -14,8 +16,15 @@ export class PlayerComponent {
   currentTime = 0;
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
   currentGuess = 0;
+  songID:string = "";
 
-  constructor(private _ngZone: NgZone){
+  constructor(private _ngZone: NgZone, private songDataService:SongDataService){
+    this.songDataService.getRandomSong()
+      .subscribe({
+        next:(song: Song[]) => {
+          this.songID = song[0].id;
+        }
+      });
   }
 
   createIFrame() {
@@ -31,7 +40,7 @@ export class PlayerComponent {
       const options = {
         width: 0,
         height: 0,
-        uri: 'spotify:track:5ZBeML7Lf3FMEVviTyvi8l'
+        uri: `spotify:track:${this.songID}`
       };
       // @ts-ignore
       const callback = (EmbedController) => {
