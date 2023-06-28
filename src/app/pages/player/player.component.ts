@@ -1,7 +1,7 @@
 import { Component, NgZone } from '@angular/core';
 import { AudioStream } from 'rxjs-audio';
-import { Song } from 'src/app/shared/models/song';
 import { SongDataService } from './song-data.service';
+import { Song } from 'src/app/shared/models/song';
 
 @Component({
   selector: 'app-player',
@@ -21,8 +21,9 @@ export class PlayerComponent {
   constructor(private _ngZone: NgZone, private songDataService:SongDataService){
     this.songDataService.getRandomSong()
       .subscribe({
-        next:(song: Song[]) => {
-          this.songID = song[0].id;
+        next:(songs: Song[]) => {
+          var randomIndex = Math.floor(Math.random()*songs.length);
+          this.songID = songs[randomIndex].id;
         }
       });
   }
