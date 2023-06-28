@@ -1,4 +1,3 @@
-<!-- src/app/pages/player/player.component.html -->
 <div class="container">
   <div id="embed-iframe"></div>
   <mat-toolbar color="primary" class="main-toolbar">
@@ -11,12 +10,11 @@
   <p>{{currentTime}}</p>
   <div class="media-footer">
     <mat-toolbar color="primary">
-      <!-- <mat-toolbar-row>
-        <span >{{ 0 }}</span>
-        <mat-slider class="time-slider" min="0" [max]="5" step="1"
-          (input)="onSliderChangeEnd($event)"></mat-slider>
-        {{ 5 }}
-      </mat-toolbar-row> -->
+      <mat-toolbar-row>
+        <span>{{ currentTime }}</span>
+        <mat-progress-bar mode="determinate" [value]="(currentTime / currentMaxTime()) * 100" color="accent"></mat-progress-bar>
+        <span>{{ this.currentMaxTime() }}</span>
+      </mat-toolbar-row>
       <mat-toolbar-row class="media-action-bar">
         <button mat-button (click)="play()" *ngIf="!playing">
           <mat-icon mat-list-icon>play_circle_filled</mat-icon>

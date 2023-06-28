@@ -11,7 +11,7 @@ export class PlayerComponent {
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
   playing = false;
-  currentTime = 1;
+  currentTime = 0;
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
   currentGuess = 0;
 
@@ -31,7 +31,7 @@ export class PlayerComponent {
       const options = {
         width: 0,
         height: 0,
-        uri: 'spotify:track:3ri4y4r1BFc9YiPNgFXeGW'
+        uri: 'spotify:track:5ZBeML7Lf3FMEVviTyvi8l'
       };
       // @ts-ignore
       const callback = (EmbedController) => {
@@ -49,11 +49,11 @@ export class PlayerComponent {
                 this.playing = true;
               });
 
-              this.currentTime = this.GUESS_TIMES[this.currentGuess] / 1000;
-              for(let i = 0; i < this.GUESS_TIMES[this.currentGuess] / 1000; i++) {
+              this.currentTime = 0;
+              for(let i = 0; i < this.currentMaxTime(); i++) {
                 await timer1000();
                 this._ngZone.run(() => {
-                  this.currentTime--;
+                  this.currentTime++;
                 });
               }
               this._ngZone.run(() => {
@@ -98,7 +98,9 @@ export class PlayerComponent {
   guess(){
     if(this.currentGuess < 6) {
       this.currentGuess++;
-      this.currentTime = this.GUESS_TIMES[this.currentGuess] / 1000;
+      this.currentTime = 0;
     }
   }
+
+  currentMaxTime = () => this.GUESS_TIMES[this.currentGuess] / 1000;
 }
