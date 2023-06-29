@@ -1,14 +1,15 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { AudioStream } from 'rxjs-audio';
 import { SongDataService } from './song-data.service';
 import { Song } from 'src/app/shared/models/song';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss']
 })
-export class PlayerComponent {
+export class PlayerComponent implements OnInit {
   audio:AudioStream = new AudioStream();
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
@@ -18,8 +19,9 @@ export class PlayerComponent {
   currentGuess = 0;
   songID:string = "";
   filteredSongs:Song[] = [];
+  guessForm: UntypedFormGroup;
 
-  constructor(private _ngZone: NgZone, private songDataService:SongDataService){
+  constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
     this.songDataService.getRandomSong()
       .subscribe({
         next:(songs: Song[]) => {
@@ -28,6 +30,10 @@ export class PlayerComponent {
           this.filteredSongs = songs;
         }
       });
+
+    this.guessForm = this.fb.group({
+      'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
+    })
   }
 
   createIFrame() {
@@ -112,6 +118,10 @@ export class PlayerComponent {
       this.currentGuess++;
       this.currentTime = 0;
     }
+  }
+
+  onInput(){
+    console.log(this.guessForm.value.guessText)
   }
 
   currentMaxTime = () => this.GUESS_TIMES[this.currentGuess] / 1000;
