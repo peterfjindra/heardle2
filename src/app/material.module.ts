@@ -9,6 +9,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 const modules = [
   MatButtonModule,
@@ -19,6 +21,8 @@ const modules = [
   MatCardModule,
   MatProgressBarModule,
   MatDividerModule,
+  MatInputModule,
+  MatFormFieldModule,
 ];
 
 @NgModule({

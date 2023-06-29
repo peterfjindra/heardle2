@@ -4,6 +4,7 @@ import { LoginButtonComponent } from './components/buttons/login-button.componen
 import { SignupButtonComponent } from './components/buttons/signup-button.component';
 import { LogoutButtonComponent } from './components/buttons/logout-button.component';
 import { MaterialModule } from '../material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,19 @@ import { MaterialModule } from '../material.module';
     SignupButtonComponent,
     LogoutButtonComponent,
   ],
-  imports: [CommonModule, MaterialModule],
-  exports: [LoginButtonComponent, SignupButtonComponent, LogoutButtonComponent, MaterialModule],
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
+  exports: [
+    LoginButtonComponent,
+    SignupButtonComponent,
+    LogoutButtonComponent,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
 export class SharedModule {}

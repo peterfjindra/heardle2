@@ -1,15 +1,15 @@
-import { Component, NgZone, OnInit } from '@angular/core';
-import { AudioStream } from 'rxjs-audio';
-import { SongDataService } from './song-data.service';
-import { Song } from 'src/app/shared/models/song';
+import { Component, NgZone } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AudioStream } from 'rxjs-audio';
+import { Song } from 'src/app/shared/models/song';
+import { SongDataService } from './song-data.service';
 
 @Component({
   selector: 'app-player',
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss']
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent {
   audio:AudioStream = new AudioStream();
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;

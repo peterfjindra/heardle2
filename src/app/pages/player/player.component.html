@@ -10,6 +10,11 @@
     <p *ngIf="currentGuess <= 5">{{GUESS_TIMES[currentGuess] / 1000}} seconds. </p>
     <p>{{6 - currentGuess}} guesses remaining.</p>
     <p *ngIf="currentGuess > 5">Game Over</p>
+    <form *ngIf="guessForm" [formGroup]="guessForm">
+      <mat-form-field>
+        <input matInput formControlName="guessText" placeholder="Enter a guess" (input)="onInput()">
+      </mat-form-field>
+    </form>
   </div>
   <div class="gameSpace">
     <mat-list *ngFor="let song of filteredSongs; last as last">
