@@ -8,6 +8,7 @@ import {MatSliderModule} from '@angular/material/slider';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatDividerModule} from '@angular/material/divider';
 
 const modules = [
   MatButtonModule,
@@ -17,6 +18,7 @@ const modules = [
   MatToolbarModule,
   MatCardModule,
   MatProgressBarModule,
+  MatDividerModule,
 ];
 
 @NgModule({

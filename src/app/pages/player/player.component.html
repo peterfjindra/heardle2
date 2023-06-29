@@ -1,13 +1,25 @@
 <div class="container">
   <div id="embed-iframe"></div>
   <mat-toolbar color="primary" class="main-toolbar">
-    <span>Audio Player</span>
+    <span>Heardle 2</span>
+    <span class="example-spacer"></span>
+    <logout-button></logout-button>
   </mat-toolbar>
-  <button (click)="guess()">Guess</button>
-  <p *ngIf="currentGuess <= 5">{{GUESS_TIMES[currentGuess] / 1000}} seconds. </p>
-  <p>{{6 - currentGuess}} guesses remaining.</p>
-  <p *ngIf="currentGuess > 5">Game Over</p>
-  <p>{{currentTime}}</p>
+  <div class="gameInfo">
+    <button (click)="guess()">Guess</button>
+    <p *ngIf="currentGuess <= 5">{{GUESS_TIMES[currentGuess] / 1000}} seconds. </p>
+    <p>{{6 - currentGuess}} guesses remaining.</p>
+    <p *ngIf="currentGuess > 5">Game Over</p>
+  </div>
+  <div class="gameSpace">
+    <mat-list *ngFor="let song of filteredSongs; last as last">
+      <mat-list-item>
+        <h4 mat-line>{{song.title + " - " + song.artist}}</h4>
+      </mat-list-item>
+
+      <mat-divider *ngIf="!last"></mat-divider>
+    </mat-list>
+  </div>
   <div class="media-footer">
     <mat-toolbar color="primary">
       <mat-toolbar-row>

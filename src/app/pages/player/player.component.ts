@@ -17,6 +17,7 @@ export class PlayerComponent {
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
   currentGuess = 0;
   songID:string = "";
+  filteredSongs:Song[] = [];
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService){
     this.songDataService.getRandomSong()
@@ -24,6 +25,7 @@ export class PlayerComponent {
         next:(songs: Song[]) => {
           var randomIndex = Math.floor(Math.random()*songs.length);
           this.songID = songs[randomIndex].id;
+          this.filteredSongs = songs;
         }
       });
   }

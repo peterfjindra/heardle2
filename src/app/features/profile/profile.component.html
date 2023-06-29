@@ -1,11 +1,9 @@
-<logout-button></logout-button>
 <div class="content-layout">
   <div class="content__body">
     <ng-container *ngIf="user$ | async as user">
       <div class="profile-grid">
         <div class="profile__header">
           <div class="profile__headline">
-            <h2 class="profile__title">{{ user.name }}</h2>
           </div>
         </div>
         <ng-container *ngIf="code$ | async as code">

@@ -1,6 +1,14 @@
 // src/app/pages/player/player.component.scss
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
 .container {
+  height:100%;
+
   .main-toolbar {
+    height: 10%;
     .spacer {
       flex: 1 1 auto;
     }
@@ -9,6 +17,10 @@
       margin-right: 5px;
       cursor: pointer;
     }
+  }
+
+  .gameInfo {
+    height:20%
   }
 
   .content {
@@ -25,10 +37,18 @@
     }
   }
 
+  .gameSpace {
+    overflow-y: scroll;
+    height:55%;
+  }
   .media-footer {
-    position: absolute;
+    //position: absolute;
     bottom: 0;
     width: 100%;
+    height: 15%;
+    mat-toolbar{
+      height: 100%;
+    }
     .time-slider {
       width: 100% !important;
       margin-left: 20px;
