@@ -19,6 +19,7 @@ export class PlayerComponent {
   currentGuess = 0;
   songID:string = "";
   filteredSongs:Song[] = [];
+  allSongs:Song[] = [];
   guessForm: UntypedFormGroup;
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
@@ -27,7 +28,7 @@ export class PlayerComponent {
         next:(songs: Song[]) => {
           var randomIndex = Math.floor(Math.random()*songs.length);
           this.songID = songs[randomIndex].id;
-          this.filteredSongs = songs;
+          this.allSongs = songs;
         }
       });
 
@@ -121,7 +122,15 @@ export class PlayerComponent {
   }
 
   onInput(){
-    console.log(this.guessForm.value.guessText)
+    var guess:string = this.guessForm.value.guessText.toLowerCase();
+    this.filteredSongs = [];
+    if(guess && guess.length > 0) {
+      this.allSongs.forEach((song) => {
+        if(song.artist.toLowerCase().includes(guess) || song.title.toLowerCase().includes(guess)) {
+          this.filteredSongs.push(song);
+        }
+      })
+    }
   }
 
   currentMaxTime = () => this.GUESS_TIMES[this.currentGuess] / 1000;
