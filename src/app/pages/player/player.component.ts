@@ -21,6 +21,7 @@ export class PlayerComponent {
   filteredSongs:Song[] = [];
   allSongs:Song[] = [];
   guessForm: UntypedFormGroup;
+  searchType:string = "both";
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
     this.songDataService.getRandomSong()
@@ -122,12 +123,42 @@ export class PlayerComponent {
   }
 
   onInput(){
-    var guess:string = this.guessForm.value.guessText.toLowerCase();
     this.filteredSongs = [];
-    if(guess && guess.length > 0) {
+    var guess:string = this.guessForm.value.guessText.toLowerCase();
+
+    if(!guess || guess.length < 2)
+      return;
+
+    var limit = () => {
+      switch(guess.length) {
+        case 2: return 10;
+        case 3: return 15;
+        default: return 25;
+      }
+    }
+    if(guess && guess.length > 1) {
       this.allSongs.forEach((song) => {
-        if(song.artist.toLowerCase().includes(guess) || song.title.toLowerCase().includes(guess)) {
-          this.filteredSongs.push(song);
+        if(this.filteredSongs.length > limit())
+          return;
+
+        switch(this.searchType) {
+          case "song":
+            if(song.title.toLowerCase().includes(guess)) {
+              this.filteredSongs.push(song);
+            }
+            break;
+          case "artist":
+            if(song.artist.toLowerCase().includes(guess)) {
+              this.filteredSongs.push(song);
+            }
+            break;
+          case "both":
+          default:
+            if(song.artist.toLowerCase().includes(guess) || song.title.toLowerCase().includes(guess)) {
+              this.filteredSongs.push(song);
+            }
+            break;
+
         }
       })
     }

@@ -10,10 +10,18 @@
     <p *ngIf="currentGuess <= 5">{{GUESS_TIMES[currentGuess] / 1000}} seconds. </p>
     <p>{{6 - currentGuess}} guesses remaining.</p>
     <p *ngIf="currentGuess > 5">Game Over</p>
-    <form *ngIf="guessForm" [formGroup]="guessForm">
-      <mat-form-field>
+
+    <form style="display: inline-block;" *ngIf="guessForm" [formGroup]="guessForm">
+      <mat-form-field style="margin-right: 5px;">
         <input matInput formControlName="guessText" placeholder="Enter a guess" (input)="onInput()">
       </mat-form-field>
+
+      <mat-button-toggle-group (change)="onInput()" name="searchType" [(ngModel)]="searchType"
+        [ngModelOptions]="{standalone: true}">
+        <mat-button-toggle value="song">Song</mat-button-toggle>
+        <mat-button-toggle value="artist">Artist</mat-button-toggle>
+        <mat-button-toggle value="both">Both</mat-button-toggle>
+      </mat-button-toggle-group>
     </form>
   </div>
   <div class="gameSpace">
@@ -29,7 +37,8 @@
     <mat-toolbar color="primary">
       <mat-toolbar-row>
         <span>{{ currentTime }}</span>
-        <mat-progress-bar mode="determinate" [value]="(currentTime / currentMaxTime()) * 100" color="accent"></mat-progress-bar>
+        <mat-progress-bar mode="determinate" [value]="(currentTime / currentMaxTime()) * 100"
+          color="accent"></mat-progress-bar>
         <span>{{ this.currentMaxTime() }}</span>
       </mat-toolbar-row>
       <mat-toolbar-row class="media-action-bar">

@@ -11,6 +11,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 const modules = [
   MatButtonModule,
@@ -23,6 +24,7 @@ const modules = [
   MatDividerModule,
   MatInputModule,
   MatFormFieldModule,
+  MatButtonToggleModule,
 ];
 
 @NgModule({
