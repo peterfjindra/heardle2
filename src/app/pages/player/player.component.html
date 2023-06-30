@@ -4,7 +4,7 @@
     <span class="example-spacer"></span>
     <logout-button></logout-button>
   </mat-toolbar>
-  <div class="gameInfo">
+  <div *ngIf="!gameOver" class="gameInfo">
     <form style="display: inline-block;" *ngIf="guessForm" [formGroup]="guessForm">
       <mat-form-field subscriptSizing="dynamic" style="margin-right: 5px;">
         <input matInput formControlName="guessText" placeholder="Enter a guess" (input)="onInput()">
@@ -29,9 +29,13 @@
       <p style="display: inline-block;">{{selectedSong.title + " - " + selectedSong.artist}}</p>
     </div>
   </div>
-  <div class="gameSpace">
-    <div id="embed-iframe"></div>
 
+  <div id="embed-iframe" [ngStyle]="{display: gameOver ? 'block' : 'none'}" style="height: 200px;"></div>
+  <div [ngStyle]="{display: gameOver ? 'block' : 'none'}">
+    <div id="embed-iframe-2"></div>
+  </div>
+
+  <div *ngIf="!gameOver" class="gameSpace">
     <mat-list (click)="selectSong(song)" class="list-item" *ngFor="let song of filteredSongs; last as last">
       <mat-list-item>
         <h4 mat-line>{{song.title + " - " + song.artist}}</h4>
@@ -40,7 +44,7 @@
       <mat-divider *ngIf="!last"></mat-divider>
     </mat-list>
   </div>
-  <div class="media-footer">
+  <div *ngIf="!gameOver" class="media-footer">
     <mat-toolbar color="primary">
       <mat-toolbar-row>
         <span>{{ this.displayTime(currentTime) }}</span>

@@ -24,6 +24,7 @@ export class PlayerComponent {
   searchType:string = "both";
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
+  gameOver:boolean = false;
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
     this.songDataService.getRandomSong()
@@ -97,6 +98,21 @@ export class PlayerComponent {
 
       IFrameAPI.createController(element, options, callback);
       this.playerLoaded = true;
+
+      const element2 = document.getElementById('embed-iframe-2');
+      const options2 = {
+        width: 400,
+        height: 200,
+        uri: `spotify:track:${this.todaysSong.id}`
+      };
+      // @ts-ignore
+      const callback2 = (EmbedController) => {
+        EmbedController.addListener('ready', () => {
+          EmbedController.play();
+        })
+      };
+
+      IFrameAPI.createController(element2, options2, callback2);
     };
   }
 
@@ -136,7 +152,7 @@ export class PlayerComponent {
         }
 
         if(this.currentGuess === 5) {
-          console.log(this.todaysSong.artist + " - " + this.todaysSong.title)
+          this.gameOver = true;
         }
 
         this.currentGuess++;
