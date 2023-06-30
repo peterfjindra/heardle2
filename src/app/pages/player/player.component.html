@@ -7,7 +7,6 @@
   </mat-toolbar>
   <div class="gameInfo">
     <button (click)="guess()">Guess</button>
-    <p *ngIf="currentGuess <= 5">{{GUESS_TIMES[currentGuess] / 1000}} seconds. </p>
     <p>{{6 - currentGuess}} guesses remaining.</p>
     <p *ngIf="currentGuess > 5">Game Over</p>
 
@@ -25,8 +24,8 @@
     </form>
   </div>
   <div class="gameSpace">
-    <mat-list *ngFor="let song of filteredSongs; last as last">
-      <mat-list-item>
+    <mat-list class="list-item" *ngFor="let song of filteredSongs; last as last">
+      <mat-list-item >
         <h4 mat-line>{{song.title + " - " + song.artist}}</h4>
       </mat-list-item>
 
