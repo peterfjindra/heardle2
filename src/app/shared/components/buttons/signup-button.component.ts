@@ -4,7 +4,7 @@ import { AuthService } from '@auth0/auth0-angular';
 @Component({
   selector: 'signup-button',
   template: `
-    <button class="button__sign-up" (click)="handleSignUp()">Sign Up</button>
+    <button mat-raised-button color="primary" class="button__sign-up" (click)="handleSignUp()">Sign Up</button>
   `,
 })
 export class SignupButtonComponent {
