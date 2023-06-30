@@ -6,21 +6,24 @@
     <logout-button></logout-button>
   </mat-toolbar>
   <div class="gameInfo">
-    <p *ngIf="currentGuess < 6">{{6 - currentGuess}} guesses remaining.</p>
-    <p *ngIf="currentGuess > 5">Game Over</p>
-
     <form style="display: inline-block;" *ngIf="guessForm" [formGroup]="guessForm">
       <mat-form-field style="margin-right: 5px;">
         <input matInput formControlName="guessText" placeholder="Enter a guess" (input)="onInput()">
       </mat-form-field>
 
-      <mat-button-toggle-group (change)="onInput()" name="searchType" [(ngModel)]="searchType"
+      <mat-button-toggle-group style="margin-right: 5px;" (change)="onInput()" name="searchType" [(ngModel)]="searchType"
         [ngModelOptions]="{standalone: true}">
         <mat-button-toggle value="song">Song</mat-button-toggle>
         <mat-button-toggle value="artist">Artist</mat-button-toggle>
         <mat-button-toggle value="both">Both</mat-button-toggle>
       </mat-button-toggle-group>
     </form>
+
+    <h1 style="display: inline-block;">{{this.displayGuessState()}}</h1>
+
+    <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessState()">
+      <mat-icon>content_copy</mat-icon>
+    </button>
 
     <div>
       <button style="display: inline-block; margin-right: 2%;" (click)="guess()">Guess</button>

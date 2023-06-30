@@ -23,6 +23,7 @@ export class PlayerComponent {
   guessForm: UntypedFormGroup;
   searchType:string = "both";
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
+  guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
     this.songDataService.getRandomSong()
@@ -123,11 +124,16 @@ export class PlayerComponent {
   guess(){
     if(this.currentGuess < 6) {
       if(this.selectedSong.id === this.todaysSong.id) {
+        this.guessState[this.currentGuess] = "🟩";
         this.currentGuess = 6;
-        console.log("WINNER");
       }
       else {
-        console.log("TRY AGAIN");
+        if(this.selectedSong.artist == this.todaysSong.artist) {
+          this.guessState[this.currentGuess] = "🟨";
+        }
+        else {
+          this.guessState[this.currentGuess] = "⬛️";
+        }
 
         if(this.currentGuess === 5) {
           console.log(this.todaysSong.artist + " - " + this.todaysSong.title)
@@ -153,6 +159,7 @@ export class PlayerComponent {
         default: return 25;
       }
     }
+
     if(guess && guess.length > 1) {
       this.allSongs.forEach((song) => {
         if(this.filteredSongs.length > limit())
@@ -175,7 +182,6 @@ export class PlayerComponent {
               this.filteredSongs.push(song);
             }
             break;
-
         }
       })
     }
@@ -186,6 +192,14 @@ export class PlayerComponent {
       time = 20;
 
     return time > 9 ? "0:" + time.toString() : "0:0" + time.toString();
+  }
+
+  displayGuessState():string {
+    var guessStateDisplay = "";
+    this.guessState.forEach((guess) => {
+      guessStateDisplay += guess;
+    });
+    return guessStateDisplay;
   }
 
   currentMaxTime = () => this.GUESS_TIMES[this.currentGuess] / 1000;

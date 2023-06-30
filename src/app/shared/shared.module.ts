@@ -1,10 +1,11 @@
-import { NgModule } from '@angular/core';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import { LoginButtonComponent } from './components/buttons/login-button.component';
-import { SignupButtonComponent } from './components/buttons/signup-button.component';
-import { LogoutButtonComponent } from './components/buttons/logout-button.component';
-import { MaterialModule } from '../material.module';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../material.module';
+import { LoginButtonComponent } from './components/buttons/login-button.component';
+import { LogoutButtonComponent } from './components/buttons/logout-button.component';
+import { SignupButtonComponent } from './components/buttons/signup-button.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    ClipboardModule,
   ],
   exports: [
     LoginButtonComponent,
@@ -25,6 +27,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    ClipboardModule,
   ],
 })
 export class SharedModule {}
