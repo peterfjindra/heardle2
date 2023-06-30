@@ -6,8 +6,7 @@
     <logout-button></logout-button>
   </mat-toolbar>
   <div class="gameInfo">
-    <button (click)="guess()">Guess</button>
-    <p>{{6 - currentGuess}} guesses remaining.</p>
+    <p *ngIf="currentGuess < 6">{{6 - currentGuess}} guesses remaining.</p>
     <p *ngIf="currentGuess > 5">Game Over</p>
 
     <form style="display: inline-block;" *ngIf="guessForm" [formGroup]="guessForm">
@@ -22,10 +21,15 @@
         <mat-button-toggle value="both">Both</mat-button-toggle>
       </mat-button-toggle-group>
     </form>
+
+    <div>
+      <button style="display: inline-block; margin-right: 2%;" (click)="guess()">Guess</button>
+      <p style="display: inline-block;">{{selectedSong.title + " - " + selectedSong.artist}}</p>
+    </div>
   </div>
   <div class="gameSpace">
-    <mat-list class="list-item" *ngFor="let song of filteredSongs; last as last">
-      <mat-list-item >
+    <mat-list (click)="selectSong(song)" class="list-item" *ngFor="let song of filteredSongs; last as last">
+      <mat-list-item>
         <h4 mat-line>{{song.title + " - " + song.artist}}</h4>
       </mat-list-item>
 

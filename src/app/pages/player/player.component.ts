@@ -17,18 +17,19 @@ export class PlayerComponent {
   currentTime = 0;
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
   currentGuess = 0;
-  songID:string = "";
+  todaysSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   filteredSongs:Song[] = [];
   allSongs:Song[] = [];
   guessForm: UntypedFormGroup;
   searchType:string = "both";
+  selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
     this.songDataService.getRandomSong()
       .subscribe({
         next:(songs: Song[]) => {
           var randomIndex = Math.floor(Math.random()*songs.length);
-          this.songID = songs[randomIndex].id;
+          this.todaysSong = songs[randomIndex];
           this.allSongs = songs;
         }
       });
@@ -51,7 +52,7 @@ export class PlayerComponent {
       const options = {
         width: 0,
         height: 0,
-        uri: `spotify:track:${this.songID}`
+        uri: `spotify:track:${this.todaysSong.id}`
       };
       // @ts-ignore
       const callback = (EmbedController) => {
@@ -115,10 +116,26 @@ export class PlayerComponent {
     this.currentTime++;
   }
 
+  selectSong(song:Song){
+    this.selectedSong = song;
+  }
+
   guess(){
     if(this.currentGuess < 6) {
-      this.currentGuess++;
-      this.currentTime = 0;
+      if(this.selectedSong.id === this.todaysSong.id) {
+        this.currentGuess = 6;
+        console.log("WINNER");
+      }
+      else {
+        console.log("TRY AGAIN");
+
+        if(this.currentGuess === 5) {
+          console.log(this.todaysSong.artist + " - " + this.todaysSong.title)
+        }
+
+        this.currentGuess++;
+        this.currentTime = 0;
+      }
     }
   }
 
