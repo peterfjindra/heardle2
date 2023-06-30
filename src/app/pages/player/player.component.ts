@@ -181,5 +181,12 @@ export class PlayerComponent {
     }
   }
 
+  displayTime(time:number):string {
+    if(isNaN(time))
+      time = 20;
+
+    return time > 9 ? "0:" + time.toString() : "0:0" + time.toString();
+  }
+
   currentMaxTime = () => this.GUESS_TIMES[this.currentGuess] / 1000;
 }

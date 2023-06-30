@@ -39,10 +39,10 @@
   <div class="media-footer">
     <mat-toolbar color="primary">
       <mat-toolbar-row>
-        <span>{{ currentTime }}</span>
+        <span>{{ this.displayTime(currentTime) }}</span>
         <mat-progress-bar mode="determinate" [value]="(currentTime / currentMaxTime()) * 100"
           color="accent"></mat-progress-bar>
-        <span>{{ this.currentMaxTime() }}</span>
+        <span>{{ this.displayTime(this.currentMaxTime()) }}</span>
       </mat-toolbar-row>
       <mat-toolbar-row class="media-action-bar">
         <button mat-button (click)="play()" *ngIf="!playing">
