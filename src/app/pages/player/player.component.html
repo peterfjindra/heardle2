@@ -1,5 +1,4 @@
 <div class="container">
-  <div id="embed-iframe"></div>
   <mat-toolbar color="primary" class="main-toolbar">
     <span>Heardle 2</span>
     <span class="example-spacer"></span>
@@ -7,7 +6,7 @@
   </mat-toolbar>
   <div class="gameInfo">
     <form style="display: inline-block;" *ngIf="guessForm" [formGroup]="guessForm">
-      <mat-form-field style="margin-right: 5px;">
+      <mat-form-field subscriptSizing="dynamic" style="margin-right: 5px;">
         <input matInput formControlName="guessText" placeholder="Enter a guess" (input)="onInput()">
       </mat-form-field>
 
@@ -17,13 +16,13 @@
         <mat-button-toggle value="artist">Artist</mat-button-toggle>
         <mat-button-toggle value="both">Both</mat-button-toggle>
       </mat-button-toggle-group>
+
+      <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
+
+      <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessState()">
+        <mat-icon>content_copy</mat-icon>
+      </button>
     </form>
-
-    <h1 style="display: inline-block;">{{this.displayGuessState()}}</h1>
-
-    <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessState()">
-      <mat-icon>content_copy</mat-icon>
-    </button>
 
     <div>
       <button mat-raised-button style="display: inline-block; margin-right: 2%;" (click)="guess()">Guess</button>
@@ -31,6 +30,8 @@
     </div>
   </div>
   <div class="gameSpace">
+    <div id="embed-iframe"></div>
+
     <mat-list (click)="selectSong(song)" class="list-item" *ngFor="let song of filteredSongs; last as last">
       <mat-list-item>
         <h4 mat-line>{{song.title + " - " + song.artist}}</h4>
