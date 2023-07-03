@@ -19,6 +19,7 @@ const envConfigFile = `export const environment = {
   },
   api: {
     serverUrl: '${process.env['API_SERVER_URL']}',
+    xMasterKey: '${process.env['X_MASTER_KEY']}'
   },
 };
 `;

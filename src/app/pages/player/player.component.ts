@@ -3,6 +3,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { AudioStream } from 'rxjs-audio';
 import { Song } from 'src/app/shared/models/song';
 import { SongDataService } from './song-data.service';
+import { UserData } from 'src/app/shared/models/user-data';
 
 @Component({
   selector: 'app-player',
@@ -28,12 +29,19 @@ export class PlayerComponent {
   gameOverText:string = "Try Again Tomorrow!"
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
-    this.songDataService.getRandomSong()
+    this.songDataService.getAllSongs()
       .subscribe({
         next:(songs: Song[]) => {
           var randomIndex = Math.floor(Math.random()*songs.length);
           this.todaysSong = songs[randomIndex];
           this.allSongs = songs;
+        }
+      });
+
+    this.songDataService.getAllUsers()
+      .subscribe({
+        next:(users:UserData[]) => {
+          console.log(users);
         }
       });
 
