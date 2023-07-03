@@ -5,6 +5,8 @@ import { Song } from 'src/app/shared/models/song';
 import { SongDataService } from './song-data.service';
 import { UserData } from 'src/app/shared/models/user-data';
 import { JsonBin } from 'src/app/shared/models/json-bin';
+import { AuthService } from '@auth0/auth0-angular';
+import { map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-player',
@@ -12,6 +14,7 @@ import { JsonBin } from 'src/app/shared/models/json-bin';
   styleUrls: ['./player.component.scss']
 })
 export class PlayerComponent {
+  user$ = this.auth.user$;
   audio:AudioStream = new AudioStream();
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
@@ -29,7 +32,7 @@ export class PlayerComponent {
   gameOver:boolean = false;
   gameOverText:string = "Try Again Tomorrow!"
 
-  constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
+  constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder, private auth: AuthService){
     this.songDataService.getAllSongs()
       .subscribe({
         next:(songs: Song[]) => {
@@ -47,6 +50,8 @@ export class PlayerComponent {
   }
 
   async userStuff() {
+    this.user$.pipe(tap((user: any) => { console.log(user); })).subscribe();
+
     let usersList: UserData[] = [];
     var tempUsers$ = await this.songDataService.getAllUsers();
 
