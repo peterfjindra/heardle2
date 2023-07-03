@@ -38,9 +38,7 @@ export class PlayerComponent {
 
     this.guessForm = this.fb.group({
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
-    });
-
-    this.createIFrame();
+    })
   }
 
   createIFrame() {
@@ -54,8 +52,8 @@ export class PlayerComponent {
     window.onSpotifyIframeApiReady = (IFrameAPI) => {
       const element = document.getElementById('embed-iframe');
       const options = {
-        width: 400,
-        height: 200,
+        width: 0,
+        height: 0,
         uri: `spotify:track:${this.todaysSong.id}`
       };
       // @ts-ignore
@@ -92,12 +90,6 @@ export class PlayerComponent {
             await timer(500);
             if(this.currentGuess < 6)
               load();
-
-            if(this.gameOver) {
-              EmbedController.pause();
-              EmbedController.seek(0);
-              EmbedController.play();
-            }
           }
 
           load();
@@ -106,6 +98,21 @@ export class PlayerComponent {
 
       IFrameAPI.createController(element, options, callback);
       this.playerLoaded = true;
+
+      const element2 = document.getElementById('embed-iframe-2');
+      const options2 = {
+        width: 400,
+        height: 200,
+        uri: `spotify:track:${this.todaysSong.id}`
+      };
+      // @ts-ignore
+      const callback2 = (EmbedController) => {
+        EmbedController.addListener('ready', () => {
+          EmbedController.play();
+        })
+      };
+
+      IFrameAPI.createController(element2, options2, callback2);
     };
   }
 
@@ -114,6 +121,9 @@ export class PlayerComponent {
   play(){
     if(this.currentGuess < 6)
       this.pleasePlay = true;
+
+    if(!this.playerLoaded)
+      this.createIFrame();
   }
 
   pause(){
