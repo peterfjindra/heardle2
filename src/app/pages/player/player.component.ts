@@ -25,6 +25,7 @@ export class PlayerComponent {
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
   gameOver:boolean = false;
+  gameOverText:string = "Try Again Tomorrow!"
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder){
     this.songDataService.getRandomSong()
@@ -142,6 +143,11 @@ export class PlayerComponent {
       if(this.selectedSong.id === this.todaysSong.id) {
         this.guessState[this.currentGuess] = "🟩";
         this.currentGuess = 6;
+        this.gameOver = true;
+        this.gameOverText = "Congrats!";
+
+        if(!this.playerLoaded)
+          this.createIFrame();
       }
       else {
         if(this.selectedSong.artist == this.todaysSong.artist) {
@@ -153,6 +159,8 @@ export class PlayerComponent {
 
         if(this.currentGuess === 5) {
           this.gameOver = true;
+          if(!this.playerLoaded)
+            this.createIFrame();
         }
 
         this.currentGuess++;
