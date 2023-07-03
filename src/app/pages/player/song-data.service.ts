@@ -25,7 +25,7 @@ export class SongDataService {
     return this.httpClient.get<JsonBin<UserData>>("https://api.jsonbin.io/v3/b/64a2f9b6b89b1e2299b92dcf",{ 'headers': this.headers }).pipe();
   }
 
-  replaceUsers(users:JsonBin<UserData>) {
-    this.httpClient.put<JsonBin<UserData>>("https://api.jsonbin.io/v3/b/64a2f9b6b89b1e2299b92dcf", users, { 'headers': this.headers }).subscribe();
+  replaceUsers(users:UserData[]) {
+    this.httpClient.put<UserData[]>("https://api.jsonbin.io/v3/b/64a2f9b6b89b1e2299b92dcf", users, { 'headers': this.headers }).subscribe();
   }
 }

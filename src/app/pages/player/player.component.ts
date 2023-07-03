@@ -15,6 +15,10 @@ import { map, tap } from 'rxjs';
 })
 export class PlayerComponent {
   user$ = this.auth.user$;
+  currentUserID:string = "";
+  currentUserData:UserData = {} as UserData;
+  allUsers: UserData[] = [];
+
   audio:AudioStream = new AudioStream();
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
@@ -33,6 +37,8 @@ export class PlayerComponent {
   gameOverText:string = "Try Again Tomorrow!"
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder, private auth: AuthService){
+    this.loadUser();
+
     this.songDataService.getAllSongs()
       .subscribe({
         next:(songs: Song[]) => {
@@ -46,22 +52,47 @@ export class PlayerComponent {
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
     })
 
-    this.userStuff();
   }
 
-  async userStuff() {
-    this.user$.pipe(tap((user: any) => { console.log(user); })).subscribe();
+  async loadUser() {
+    this.user$.pipe(tap((user: any) => { console.log(user); this.currentUserID = user.sub; })).subscribe();
 
-    let usersList: UserData[] = [];
+
     var tempUsers$ = await this.songDataService.getAllUsers();
 
     tempUsers$
       .subscribe({
         next:(users:JsonBin<UserData>) => {
-          console.log(users);
-          usersList.push(users.record[0]);
-          usersList[0].playedToday = true;
-          this.songDataService.replaceUsers({metadata:users.metadata, record:usersList} as JsonBin<UserData>);
+          users.record.forEach(user => {
+            this.allUsers.push(user);
+            if(user.uid == this.currentUserID) {
+              this.currentUserData = user;
+            }
+          });
+
+          if(!this.currentUserData?.uid) {
+            this.allUsers.push({
+              uname:"name",
+              uid:this.currentUserID,
+              playedToday:false,
+              scores:{
+                0:0,
+                1:0,
+                2:0,
+                3:0,
+                4:0,
+                5:0,
+                6:0
+              }
+            } as UserData);
+            this.songDataService.replaceUsers(this.allUsers);
+          }
+
+          if(this.currentUserData.playedToday) {
+            this.gameOver = true;
+          }
+          //usersList[0].playedToday = true;
+          //this.songDataService.replaceUsers({metadata:users.metadata, record:usersList} as JsonBin<UserData>);
         }
       });
 
