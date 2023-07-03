@@ -4,6 +4,7 @@ import { AudioStream } from 'rxjs-audio';
 import { Song } from 'src/app/shared/models/song';
 import { SongDataService } from './song-data.service';
 import { UserData } from 'src/app/shared/models/user-data';
+import { JsonBin } from 'src/app/shared/models/json-bin';
 
 @Component({
   selector: 'app-player',
@@ -38,16 +39,27 @@ export class PlayerComponent {
         }
       });
 
-    this.songDataService.getAllUsers()
-      .subscribe({
-        next:(users:UserData[]) => {
-          console.log(users);
-        }
-      });
-
     this.guessForm = this.fb.group({
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
     })
+
+    this.userStuff();
+  }
+
+  async userStuff() {
+    let usersList: UserData[] = [];
+    var tempUsers$ = await this.songDataService.getAllUsers();
+
+    tempUsers$
+      .subscribe({
+        next:(users:JsonBin<UserData>) => {
+          console.log(users);
+          usersList.push(users.record[0]);
+          usersList[0].playedToday = true;
+          this.songDataService.replaceUsers({metadata:users.metadata, record:usersList} as JsonBin<UserData>);
+        }
+      });
+
   }
 
   createIFrame() {
