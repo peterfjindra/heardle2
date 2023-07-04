@@ -7,6 +7,7 @@ import { JsonBin } from 'src/app/shared/models/json-bin';
 import { Song } from 'src/app/shared/models/song';
 import { UserData } from 'src/app/shared/models/user-data';
 import { SongDataService } from './song-data.service';
+import { SongLog } from 'src/app/shared/models/song-log';
 
 @Component({
   selector: 'app-player',
@@ -18,6 +19,8 @@ export class PlayerComponent {
   currentUserID:string = "";
   currentUserData:UserData = {} as UserData;
   allUsers: UserData[] = [];
+
+  allSongLogs: SongLog[] = [];
 
   audio:AudioStream = new AudioStream();
   playerLoaded:boolean = false;
@@ -33,23 +36,58 @@ export class PlayerComponent {
   searchType:string = "both";
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
+
   gameOver:boolean = true;
   gameOverText:string = ""
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder, private auth: AuthService){
-    this.loadUser();
+    this.guessForm = this.fb.group({
+      'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
+    })
+
+    this.loadSong().then(() => this.loadUser());
+
+    //while()
+  }
+
+  async loadSong(){
     this.songDataService.getAllSongs()
       .subscribe({
         next:(songs: Song[]) => {
-          var randomIndex = Math.floor(Math.random()*songs.length);
-          this.todaysSong = songs[randomIndex];
           this.allSongs = songs;
         }
       });
 
-    this.guessForm = this.fb.group({
-      'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
-    })
+    var tempSongLogs$ = await this.songDataService.getSongLogs();
+
+    tempSongLogs$
+      .subscribe({
+        next:(songLogs:JsonBin<SongLog>) => {
+          this.allSongLogs = songLogs.record;
+          var firstLog = this.allSongLogs[0];
+          if(firstLog.date == this.today()) {
+            var tempSong = this.allSongs.find(s => s.id == firstLog.id);
+            if(tempSong)
+              this.todaysSong = tempSong;
+          }
+          else {
+            var randomIndex = Math.floor(Math.random()*this.allSongs.length);
+            tempSong = this.allSongs[randomIndex];
+            while(this.allSongLogs.find(sl => sl.id == tempSong?.id)) {
+              randomIndex = Math.floor(Math.random()*this.allSongs.length);
+              tempSong = this.allSongs[randomIndex];
+            }
+            this.todaysSong = tempSong;
+            let todaysLog = {id:this.todaysSong.id, date:this.today()} as SongLog;
+            if(this.allSongLogs.length > 700) {
+              this.allSongLogs.splice(699);
+            }
+            this.allSongLogs.unshift(todaysLog);
+            let newAllSongLogs = this.allSongLogs;
+            this.songDataService.replaceSongLogs(newAllSongLogs);
+          }
+        }
+      })
   }
 
   async loadUser() {
