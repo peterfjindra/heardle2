@@ -46,9 +46,8 @@ export class PlayerComponent {
     })
 
     this.loadSong().then(() => this.loadUser());
-
-    //while()
   }
+
 
   async loadSong(){
     this.songDataService.getAllSongs()
@@ -127,7 +126,11 @@ export class PlayerComponent {
       });
   }
 
-  createIFrame() {
+  async createIFrame() {
+    while(!this.playerLoaded && this.todaysSong.id == "dummy"){
+      await setTimeout(()=>{}, 500)
+    }
+
     const iFrameScript = document.createElement('script');
     iFrameScript.src='https://open.spotify.com/embed-podcast/iframe-api/v1';
     iFrameScript.addEventListener('load', (e) => {
