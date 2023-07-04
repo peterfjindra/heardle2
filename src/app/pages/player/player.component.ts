@@ -57,7 +57,6 @@ export class PlayerComponent {
   async loadUser() {
     this.user$.pipe(tap((user: any) => { console.log(user); this.currentUserID = user.sub; })).subscribe();
 
-
     var tempUsers$ = await this.songDataService.getAllUsers();
 
     tempUsers$
@@ -74,28 +73,20 @@ export class PlayerComponent {
             this.allUsers.push({
               uname:"name",
               uid:this.currentUserID,
-              playedToday:false,
-              scores:{
-                0:0,
-                1:0,
-                2:0,
-                3:0,
-                4:0,
-                5:0,
-                6:0
-              }
+              lastPlayed:"",
+              scores:{0:0,1:0,2:0,3:0,4:0,5:0,6:0}
             } as UserData);
             this.songDataService.replaceUsers(this.allUsers);
           }
 
-          if(this.currentUserData.playedToday) {
+          if(this.currentUserData.lastPlayed == this.today()) {
             this.gameOver = true;
+            this.guessState = this.currentUserData.lastScore.split('');
+            if(!this.playerLoaded)
+              this.createIFrame();
           }
-          //usersList[0].playedToday = true;
-          //this.songDataService.replaceUsers({metadata:users.metadata, record:usersList} as JsonBin<UserData>);
         }
       });
-
   }
 
   createIFrame() {
@@ -198,12 +189,7 @@ export class PlayerComponent {
     if(this.currentGuess < 6) {
       if(this.selectedSong.id === this.todaysSong.id) {
         this.guessState[this.currentGuess] = "🟩";
-        this.currentGuess = 6;
-        this.gameOver = true;
-        this.gameOverText = "Congrats!";
-
-        if(!this.playerLoaded)
-          this.createIFrame();
+        this.endGame();
       }
       else {
         if(this.selectedSong.artist == this.todaysSong.artist) {
@@ -214,9 +200,8 @@ export class PlayerComponent {
         }
 
         if(this.currentGuess === 5) {
-          this.gameOver = true;
-          if(!this.playerLoaded)
-            this.createIFrame();
+          this.currentGuess = -1;
+          this.endGame();
         }
 
         this.currentGuess++;
@@ -267,6 +252,33 @@ export class PlayerComponent {
     }
   }
 
+  endGame(){
+    this.gameOver = true;
+    var finalScore = this.currentGuess + 1;
+    this.gameOverText = this.currentGuess == 0 ? "Try again tomorrow!" : "Winner winner!";
+
+    if(!this.playerLoaded)
+      this.createIFrame();
+
+    this.allUsers.forEach(u => {
+      if(u.uid == this.currentUserID) {
+        u.lastPlayed = this.today();
+        u.lastScore = this.displayGuessState();
+        switch(finalScore) {
+          case 0: u.scores[0]++; break;
+          case 1: u.scores[1]++; break;
+          case 2: u.scores[2]++; break;
+          case 3: u.scores[3]++; break;
+          case 4: u.scores[4]++; break;
+          case 5: u.scores[5]++; break;
+          case 6: u.scores[6]++; break;
+        }
+      }
+    })
+
+    this.songDataService.replaceUsers(this.allUsers as UserData[]);
+  }
+
   displayTime(time:number):string {
     if(isNaN(time))
       time = 20;
@@ -280,6 +292,11 @@ export class PlayerComponent {
       guessStateDisplay += guess;
     });
     return guessStateDisplay;
+  }
+
+  today():string{
+    var today = new Date();
+    return today.getDate() + '-' + (today.getMonth() + 1) + '-' + today.getFullYear();
   }
 
   currentMaxTime = () => this.GUESS_TIMES[this.currentGuess] / 1000;

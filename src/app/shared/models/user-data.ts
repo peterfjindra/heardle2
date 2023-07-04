@@ -1,7 +1,8 @@
 export interface UserData {
   uname:string;
   uid:string;
-  playedToday:boolean;
+  lastPlayed:string;
+  lastScore:string;
   scores:Scores;
 }
 
