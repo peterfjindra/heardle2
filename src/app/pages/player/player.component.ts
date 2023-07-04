@@ -1,12 +1,12 @@
 import { Component, NgZone } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { AudioStream } from 'rxjs-audio';
-import { Song } from 'src/app/shared/models/song';
-import { SongDataService } from './song-data.service';
-import { UserData } from 'src/app/shared/models/user-data';
-import { JsonBin } from 'src/app/shared/models/json-bin';
 import { AuthService } from '@auth0/auth0-angular';
-import { map, tap } from 'rxjs';
+import { tap } from 'rxjs';
+import { AudioStream } from 'rxjs-audio';
+import { JsonBin } from 'src/app/shared/models/json-bin';
+import { Song } from 'src/app/shared/models/song';
+import { UserData } from 'src/app/shared/models/user-data';
+import { SongDataService } from './song-data.service';
 
 @Component({
   selector: 'app-player',
@@ -33,12 +33,11 @@ export class PlayerComponent {
   searchType:string = "both";
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
-  gameOver:boolean = false;
-  gameOverText:string = "Try Again Tomorrow!"
+  gameOver:boolean = true;
+  gameOverText:string = ""
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder, private auth: AuthService){
     this.loadUser();
-
     this.songDataService.getAllSongs()
       .subscribe({
         next:(songs: Song[]) => {
@@ -51,7 +50,6 @@ export class PlayerComponent {
     this.guessForm = this.fb.group({
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
     })
-
   }
 
   async loadUser() {
@@ -80,10 +78,12 @@ export class PlayerComponent {
           }
 
           if(this.currentUserData.lastPlayed == this.today()) {
-            this.gameOver = true;
             this.guessState = this.currentUserData.lastScore.split('');
             if(!this.playerLoaded)
               this.createIFrame();
+          }
+          else {
+            this.gameOver = false;
           }
         }
       });
@@ -109,7 +109,6 @@ export class PlayerComponent {
         // @ts-ignore
         const timer = ms => new Promise(res => setTimeout(res, ms));
         const timer1000 = () => new Promise(res => setTimeout(res, 1000));
-
 
         EmbedController.addListener('ready', async () => {
           const load = async () => {
@@ -163,8 +162,6 @@ export class PlayerComponent {
       IFrameAPI.createController(element2, options2, callback2);
     };
   }
-
-  onSliderChangeEnd(event:any){}
 
   play(){
     if(this.currentGuess < 6)
