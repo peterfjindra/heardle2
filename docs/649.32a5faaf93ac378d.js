@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkheardle2=self.webpackChunkheardle2||[]).push([[649],{649:(u,n,o)=>{o.r(n),o.d(n,{ProfileModule:()=>l});var a=o(6895),E=o(4238),d=o(4466),r=o(9059),_=o(4650);class l{}l.\u0275fac=function(P){return new(P||l)},l.\u0275mod=_.oAB({type:l}),l.\u0275inj=_.cJS({imports:[a.ez,d.m,E.Bz.forChild([{path:"",component:r.d}])]})}}]);
