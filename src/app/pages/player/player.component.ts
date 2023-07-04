@@ -125,6 +125,8 @@ export class PlayerComponent {
                 this._ngZone.run(() => {
                   this.currentTime++;
                 });
+                if(!this.pleasePlay)
+                  break;
               }
               this._ngZone.run(() => {
                 this.playing = false;
@@ -171,7 +173,9 @@ export class PlayerComponent {
       this.createIFrame();
   }
 
-  pause(){
+  stop(){
+    this.pleasePlay = false;
+    this.currentTime = 0;
   }
 
   updateCurrentTime(){
