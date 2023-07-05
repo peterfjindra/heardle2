@@ -19,7 +19,9 @@ const envConfigFile = `export const environment = {
   },
   api: {
     serverUrl: '${process.env['API_SERVER_URL']}',
-    xMasterKey: '${process.env['X_MASTER_KEY']}'
+    xMasterKey: '${process.env['X_MASTER_KEY']}',
+    userEnpoint: '${process.env['USER_DATA_ENDPOINT']}',
+    songLogEndpoint: '${process.env['SONG_LOG_ENDPOINT']}'
   },
 };
 `;
