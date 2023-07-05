@@ -6,9 +6,9 @@
     "env": "ts-node set-env.ts",
     "start": "npm run env && ng serve",
     "build": "ng build",
+    "build-prod": "npm run env && ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "api": "json-server --host 0.0.0.0 --port 6060 --watch json-server/db.json --routes json-server/routes.json"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
