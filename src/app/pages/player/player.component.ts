@@ -143,8 +143,8 @@ export class PlayerComponent implements OnInit {
     window.onSpotifyIframeApiReady = (IFrameAPI) => {
       const element = document.getElementById('embed-iframe');
       const options = {
-        width: 0,
-        height: 0,
+        width: 1,
+        height: 1,
         uri: `spotify:track:${this.todaysSong.id}`
       };
       // @ts-ignore
