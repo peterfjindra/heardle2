@@ -6,7 +6,7 @@
     "env": "ts-node set-env.ts",
     "start": "npm run env && ng serve",
     "build": "ng build",
-    "build-prod": "npm run env && ng build --configuration production",
+    "build-prod": "npm run env && ng build --output-path docs --base-href /heardle2/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
