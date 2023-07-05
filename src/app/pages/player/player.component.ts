@@ -299,7 +299,7 @@ export class PlayerComponent implements OnInit {
   endGame(){
     this.gameOver = true;
     var finalScore = this.currentGuess + 1;
-    this.gameOverText = this.currentGuess == 0 ? "Try again tomorrow!" : "Winner winner!";
+    this.gameOverText = finalScore == 0 ? "Try again tomorrow!" : "Winner winner!";
 
     if(!this.playerLoaded)
       this.createIFrame();
