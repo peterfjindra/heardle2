@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, count, skipUntil, skipWhile, take, tap } from "rxjs";
-import { Song } from "src/app/shared/models/song";
-import { environment } from '../../../environments/environment';
-import { UserData } from "src/app/shared/models/user-data";
+import { Observable } from "rxjs";
 import { JsonBin } from "src/app/shared/models/json-bin";
+import { Song } from "src/app/shared/models/song";
 import { SongLog } from "src/app/shared/models/song-log";
+import { UserData } from "src/app/shared/models/user-data";
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn:'root'
@@ -23,18 +23,18 @@ export class SongDataService {
   }
 
   getAllUsers():Observable<JsonBin<UserData>> {
-    return this.httpClient.get<JsonBin<UserData>>("https://api.jsonbin.io/v3/b/64a2f9b6b89b1e2299b92dcf",{ 'headers': this.headers }).pipe();
+    return this.httpClient.get<JsonBin<UserData>>(environment.api.userEndpoint,{ 'headers': this.headers }).pipe();
   }
 
   replaceUsers(users:UserData[]) {
-    this.httpClient.put<UserData[]>("https://api.jsonbin.io/v3/b/64a2f9b6b89b1e2299b92dcf", users, { 'headers': this.headers }).subscribe();
+    this.httpClient.put<UserData[]>(environment.api.userEndpoint, users, { 'headers': this.headers }).subscribe();
   }
 
   getSongLogs():Observable<JsonBin<SongLog>>{
-    return this.httpClient.get<JsonBin<SongLog>>("https://api.jsonbin.io/v3/b/64a425269d312622a37a2c24",{ 'headers': this.headers }).pipe();
+    return this.httpClient.get<JsonBin<SongLog>>(environment.api.songLogEndpoint,{ 'headers': this.headers }).pipe();
   }
 
   replaceSongLogs(songLogs:SongLog[]){
-    this.httpClient.put<SongLog[]>("https://api.jsonbin.io/v3/b/64a425269d312622a37a2c24", songLogs, { 'headers': this.headers }).subscribe();
+    this.httpClient.put<SongLog[]>(environment.api.songLogEndpoint, songLogs, { 'headers': this.headers }).subscribe();
   }
 }

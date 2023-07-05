@@ -1,4 +1,4 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@auth0/auth0-angular';
 import { tap } from 'rxjs';
@@ -14,7 +14,7 @@ import { SongLog } from 'src/app/shared/models/song-log';
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss']
 })
-export class PlayerComponent {
+export class PlayerComponent implements OnInit {
   user$ = this.auth.user$;
   currentUserID:string = "";
   currentUserData:UserData = {} as UserData;
@@ -44,10 +44,12 @@ export class PlayerComponent {
     this.guessForm = this.fb.group({
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
     })
-
-    this.loadSong().then(() => this.loadUser());
   }
 
+
+  ngOnInit(): void {
+    this.loadSong().then(() => this.loadUser());
+  }
 
   async loadSong(){
     this.songDataService.getAllSongs()
