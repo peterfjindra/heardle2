@@ -17,7 +17,7 @@ export class LogoutButtonComponent {
   handleLogout(): void {
     this.auth.logout({
       logoutParams: {
-        returnTo: this.doc.location.origin,
+        returnTo: '/',
       },
     });
   }
