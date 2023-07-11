@@ -70,7 +70,7 @@ export class PlayerComponent implements OnInit {
   }
 
   async loadUser(){
-    this.currentUserID = await firstValueFrom(this.user$.pipe(map((user: any) => { console.log(user); return user.sub; })));
+    this.currentUserID = await firstValueFrom(this.user$.pipe(map((user: any) => { return user.sub; })));
 
     this.userDataContext = await firstValueFrom(this.songDataService.getAllUsers(this.currentUserID));
   }
@@ -78,6 +78,7 @@ export class PlayerComponent implements OnInit {
   async createIFrame() {
     if(this.userDataContext.currentUser.lastPlayed == this.today()) {
       this.guessState = this.userDataContext.currentUser.lastScore.split('');
+      this.currentGuess = -1;
       this.played = true;
       this.endGame();
       return;
@@ -88,7 +89,6 @@ export class PlayerComponent implements OnInit {
     const iFrameScript = document.createElement('script');
     iFrameScript.src='https://open.spotify.com/embed-podcast/iframe-api/v1';
     iFrameScript.addEventListener('load', (e) => {
-      console.log(e);
     });
     document.head.appendChild(iFrameScript);
     // @ts-ignore
@@ -263,7 +263,6 @@ export class PlayerComponent implements OnInit {
       const iFrameScript = document.createElement('script');
       iFrameScript.src='https://open.spotify.com/embed-podcast/iframe-api/v1';
       iFrameScript.addEventListener('load', (e) => {
-        console.log(e);
       });
       document.head.appendChild(iFrameScript);
 
