@@ -1,13 +1,13 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@auth0/auth0-angular';
-import { tap } from 'rxjs';
+import { firstValueFrom, tap } from 'rxjs';
 import { AudioStream } from 'rxjs-audio';
 import { JsonBin } from 'src/app/shared/models/json-bin';
 import { Song } from 'src/app/shared/models/song';
+import { SongLog } from 'src/app/shared/models/song-log';
 import { UserData } from 'src/app/shared/models/user-data';
 import { SongDataService } from './song-data.service';
-import { SongLog } from 'src/app/shared/models/song-log';
 
 @Component({
   selector: 'app-player',
@@ -26,6 +26,7 @@ export class PlayerComponent implements OnInit {
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
   playing = false;
+
   currentTime = 0;
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
   currentGuess = 0;
@@ -43,55 +44,33 @@ export class PlayerComponent implements OnInit {
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder, private auth: AuthService){
     this.guessForm = this.fb.group({
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
-    })
-  }
+    });
 
-
-  ngOnInit(): void {
-    this.loadSong().then(() => this.loadUser());
-  }
-
-  async loadSong(){
     this.songDataService.getAllSongs()
       .subscribe({
         next:(songs: Song[]) => {
           this.allSongs = songs;
         }
       });
-
-    var tempSongLogs$ = await this.songDataService.getSongLogs();
-
-    tempSongLogs$
-      .subscribe({
-        next:(songLogs:JsonBin<SongLog>) => {
-          this.allSongLogs = songLogs.record;
-          var firstLog = this.allSongLogs[0];
-          if(firstLog.date == this.today()) {
-            var tempSong = this.allSongs.find(s => s.id == firstLog.id);
-            if(tempSong)
-              this.todaysSong = tempSong;
-          }
-          else {
-            var randomIndex = Math.floor(Math.random()*this.allSongs.length);
-            tempSong = this.allSongs[randomIndex];
-            while(this.allSongLogs.find(sl => sl.id == tempSong?.id)) {
-              randomIndex = Math.floor(Math.random()*this.allSongs.length);
-              tempSong = this.allSongs[randomIndex];
-            }
-            this.todaysSong = tempSong;
-            let todaysLog = {id:this.todaysSong.id, date:this.today()} as SongLog;
-            if(this.allSongLogs.length > 700) {
-              this.allSongLogs.splice(699);
-            }
-            this.allSongLogs.unshift(todaysLog);
-            let newAllSongLogs = this.allSongLogs;
-            this.songDataService.replaceSongLogs(newAllSongLogs);
-          }
-        }
-      })
   }
 
-  async loadUser() {
+
+  ngOnInit(): void {
+    this.initData();
+  }
+
+  async initData(){
+    const p1 = () => new Promise<string>(async (res) => {await this.loadSong(); res("resolved");});
+    const p2 = () => new Promise<string>((res) => {this.loadUser(); res("resolved");});
+
+    p1().then((val) => { p2().then((val) => {this.createIFrame();})});
+  }
+
+  async loadSong(){
+    this.todaysSong = await firstValueFrom(this.songDataService.getTodaysSong());
+  }
+
+  async loadUser(){
     this.user$.pipe(tap((user: any) => { console.log(user); this.currentUserID = user.sub; })).subscribe();
 
     var tempUsers$ = await this.songDataService.getAllUsers();
@@ -129,9 +108,6 @@ export class PlayerComponent implements OnInit {
   }
 
   async createIFrame() {
-    while(!this.playerLoaded && this.todaysSong.id == "dummy"){
-      await setTimeout(()=>{}, 500)
-    }
 
     const iFrameScript = document.createElement('script');
     iFrameScript.src='https://open.spotify.com/embed-podcast/iframe-api/v1';
@@ -145,7 +121,8 @@ export class PlayerComponent implements OnInit {
       const options = {
         width: 1,
         height: 1,
-        uri: `spotify:track:${this.todaysSong.id}`
+        uri: `spotify:track:${this.todaysSong.id}`,
+        allow:'autoplay'
       };
       // @ts-ignore
       const callback = (EmbedController) => {
@@ -153,58 +130,50 @@ export class PlayerComponent implements OnInit {
         const timer = ms => new Promise(res => setTimeout(res, ms));
         const timer1000 = () => new Promise(res => setTimeout(res, 1000));
 
-        EmbedController.addListener('ready', async () => {
-          const load = async () => {
-            if(this.pleasePlay) {
-              EmbedController.play();
+        var playButton = document.querySelector('.custom-play-button');
+        if(playButton){
+          playButton.addEventListener('click', async () => {
+            const load = async () => {
+                  if(this.pleasePlay) {
+                      EmbedController.play();
 
-              this._ngZone.run(() => {
-                this.playing = true;
-              });
+                    this._ngZone.run(() => {
+                      this.playing = true;
+                    });
 
-              this.currentTime = 0;
-              for(let i = 0; i < this.currentMaxTime(); i++) {
-                await timer1000();
-                this._ngZone.run(() => {
-                  this.currentTime++;
-                });
-                if(!this.pleasePlay)
-                  break;
+                    this.currentTime = 0;
+                    for(let i = 0; i < this.currentMaxTime(); i++) {
+                      await timer1000();
+                      this._ngZone.run(() => {
+                        this.currentTime++;
+                      });
+                      if(!this.pleasePlay)
+                        break;
+                    }
+                    this._ngZone.run(() => {
+                      this.playing = false;
+                      this.pleasePlay = false;
+                    });
+
+                    EmbedController.pause();
+                    EmbedController.seek(0);
+                  }
+                  await timer(500);
+                  if(this.currentGuess < 6)
+                    load();
+                }
+
+                load();
               }
-              this._ngZone.run(() => {
-                this.playing = false;
-                this.pleasePlay = false;
-              });
+        )}
 
-              EmbedController.pause();
-              EmbedController.seek(0);
-            }
-            await timer(500);
-            if(this.currentGuess < 6)
-              load();
-          }
 
-          load();
-        })
       };
 
       IFrameAPI.createController(element, options, callback);
       this.playerLoaded = true;
 
-      const element2 = document.getElementById('embed-iframe-2');
-      const options2 = {
-        width: 400,
-        height: 200,
-        uri: `spotify:track:${this.todaysSong.id}`
-      };
-      // @ts-ignore
-      const callback2 = (EmbedController) => {
-        EmbedController.addListener('ready', () => {
-          EmbedController.play();
-        })
-      };
 
-      IFrameAPI.createController(element2, options2, callback2);
     };
   }
 
@@ -301,8 +270,25 @@ export class PlayerComponent implements OnInit {
     var finalScore = this.currentGuess + 1;
     this.gameOverText = finalScore == 0 ? "Try again tomorrow!" : "Winner winner!";
 
-    if(!this.playerLoaded)
-      this.createIFrame();
+    // if(!this.playerLoaded)
+    //   this.createIFrame();
+    // @ts-ignore
+    window.onSpotifyIframeApiReady = (IFrameAPI) => {
+      const element2 = document.getElementById('embed-iframe-2');
+        const options2 = {
+          width: 400,
+          height: 200,
+          uri: `spotify:track:${this.todaysSong.id}`
+        };
+        // @ts-ignore
+        const callback2 = (EmbedController) => {
+          EmbedController.addListener('ready', () => {
+            EmbedController.play();
+          })
+        };
+
+      //IFrameAPI.createController(element2, options2, callback2);
+    }
 
     this.allUsers.forEach(u => {
       if(u.uid == this.currentUserID) {
@@ -336,6 +322,14 @@ export class PlayerComponent implements OnInit {
       guessStateDisplay += guess;
     });
     return guessStateDisplay;
+  }
+
+  displayGuessStateCopy():string {
+    var guessStateDisplay = "";
+    this.guessState.forEach((guess) => {
+      guessStateDisplay += guess;
+    });
+    return "Heardle2 " + this.today() + "\n" + guessStateDisplay;
   }
 
   today():string{

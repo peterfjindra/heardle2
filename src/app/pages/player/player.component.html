@@ -19,9 +19,9 @@
 
       <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
 
-      <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessState()">
+      <!-- <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessStateCopy()">
         <mat-icon>content_copy</mat-icon>
-      </button>
+      </button> -->
     </form>
 
     <div>
@@ -37,12 +37,12 @@
   <div *ngIf="gameOver">
     <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
 
-    <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessState()">
+    <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessStateCopy()">
       <mat-icon>content_copy</mat-icon>
     </button>
   </div>
 
-  <div id="embed-iframe" [ngStyle]="{display: gameOver ? 'block' : 'none'}" style="height: 200px;"></div>
+  <div id="embed-iframe" [ngStyle]="{display: gameOver ? 'block' : 'none'}" ></div>
   <div [ngStyle]="{display: gameOver ? 'block' : 'none'}">
     <div id="embed-iframe-2"></div>
   </div>
@@ -56,7 +56,7 @@
       <mat-divider *ngIf="!last"></mat-divider>
     </mat-list>
   </div>
-  <div *ngIf="!gameOver" class="media-footer">
+  <div class="media-footer">
     <mat-toolbar color="primary">
       <mat-toolbar-row>
         <span>{{ this.displayTime(currentTime) }}</span>
@@ -65,7 +65,7 @@
         <span>{{ this.displayTime(this.currentMaxTime()) }}</span>
       </mat-toolbar-row>
       <mat-toolbar-row class="media-action-bar">
-        <button mat-button (click)="play()" *ngIf="!playing">
+        <button mat-button (click)="play()" *ngIf="!playing" class="custom-play-button">
           <mat-icon mat-list-icon>play_circle_filled</mat-icon>
         </button>
 
