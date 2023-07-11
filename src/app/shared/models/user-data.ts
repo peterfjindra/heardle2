@@ -15,3 +15,8 @@ export interface Scores {
   5:number;
   6:number;
 }
+
+export interface UserDataContext {
+  currentUser:UserData;
+  allUsers:UserData[];
+}

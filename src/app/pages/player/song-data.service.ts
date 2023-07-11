@@ -4,7 +4,7 @@ import { Observable, map } from "rxjs";
 import { JsonBin } from "src/app/shared/models/json-bin";
 import { Song } from "src/app/shared/models/song";
 import { SongLog } from "src/app/shared/models/song-log";
-import { UserData } from "src/app/shared/models/user-data";
+import { UserData, UserDataContext } from "src/app/shared/models/user-data";
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -22,8 +22,32 @@ export class SongDataService {
     return this.httpClient.get<Song[]>("assets/song_data.json").pipe();
   }
 
-  getAllUsers():Observable<JsonBin<UserData>> {
-    return this.httpClient.get<JsonBin<UserData>>(environment.api.userEndpoint,{ 'headers': this.headers }).pipe();
+  getAllUsers(currentUserID:string):Observable<UserDataContext> {
+    return this.httpClient.get<JsonBin<UserData>>(environment.api.userEndpoint,{ 'headers': this.headers })
+      .pipe(
+        map(users => {
+          let allUsers:UserData[] = [];
+          let currentUserData:UserData = {} as UserData;
+          users.record.forEach(user => {
+            allUsers.push(user);
+            if(user.uid == currentUserID) {
+              currentUserData = user;
+            }
+          });
+
+          if(!currentUserData?.uid) {
+            allUsers.push({
+              uname:"name",
+              uid:currentUserID,
+              lastPlayed:"",
+              scores:{0:0,1:0,2:0,3:0,4:0,5:0,6:0}
+            } as UserData);
+            this.replaceUsers(allUsers);
+          }
+
+          return {currentUser:currentUserData, allUsers:allUsers} as UserDataContext;
+        })
+      );
   }
 
   replaceUsers(users:UserData[]) {

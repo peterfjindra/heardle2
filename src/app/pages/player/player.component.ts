@@ -1,12 +1,11 @@
 import { Component, NgZone, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@auth0/auth0-angular';
-import { firstValueFrom, tap } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { AudioStream } from 'rxjs-audio';
-import { JsonBin } from 'src/app/shared/models/json-bin';
 import { Song } from 'src/app/shared/models/song';
 import { SongLog } from 'src/app/shared/models/song-log';
-import { UserData } from 'src/app/shared/models/user-data';
+import { UserData, UserDataContext } from 'src/app/shared/models/user-data';
 import { SongDataService } from './song-data.service';
 
 @Component({
@@ -17,8 +16,7 @@ import { SongDataService } from './song-data.service';
 export class PlayerComponent implements OnInit {
   user$ = this.auth.user$;
   currentUserID:string = "";
-  currentUserData:UserData = {} as UserData;
-  allUsers: UserData[] = [];
+  userDataContext:UserDataContext = {} as UserDataContext;
 
   allSongLogs: SongLog[] = [];
 
@@ -26,6 +24,7 @@ export class PlayerComponent implements OnInit {
   playerLoaded:boolean = false;
   pleasePlay:boolean = false;
   playing = false;
+  played = false;
 
   currentTime = 0;
   GUESS_TIMES = [1000, 2000, 3000, 5000, 10000, 20000];
@@ -61,7 +60,7 @@ export class PlayerComponent implements OnInit {
 
   async initData(){
     const p1 = () => new Promise<string>(async (res) => {await this.loadSong(); res("resolved");});
-    const p2 = () => new Promise<string>((res) => {this.loadUser(); res("resolved");});
+    const p2 = () => new Promise<string>(async (res) => {await this.loadUser(); res("resolved");});
 
     p1().then((val) => { p2().then((val) => {this.createIFrame();})});
   }
@@ -71,43 +70,20 @@ export class PlayerComponent implements OnInit {
   }
 
   async loadUser(){
-    this.user$.pipe(tap((user: any) => { console.log(user); this.currentUserID = user.sub; })).subscribe();
+    this.currentUserID = await firstValueFrom(this.user$.pipe(map((user: any) => { console.log(user); return user.sub; })));
 
-    var tempUsers$ = await this.songDataService.getAllUsers();
-
-    tempUsers$
-      .subscribe({
-        next:(users:JsonBin<UserData>) => {
-          users.record.forEach(user => {
-            this.allUsers.push(user);
-            if(user.uid == this.currentUserID) {
-              this.currentUserData = user;
-            }
-          });
-
-          if(!this.currentUserData?.uid) {
-            this.allUsers.push({
-              uname:"name",
-              uid:this.currentUserID,
-              lastPlayed:"",
-              scores:{0:0,1:0,2:0,3:0,4:0,5:0,6:0}
-            } as UserData);
-            this.songDataService.replaceUsers(this.allUsers);
-          }
-
-          if(this.currentUserData.lastPlayed == this.today()) {
-            this.guessState = this.currentUserData.lastScore.split('');
-            if(!this.playerLoaded)
-              this.createIFrame();
-          }
-          else {
-            this.gameOver = false;
-          }
-        }
-      });
+    this.userDataContext = await firstValueFrom(this.songDataService.getAllUsers(this.currentUserID));
   }
 
   async createIFrame() {
+    if(this.userDataContext.currentUser.lastPlayed == this.today()) {
+      this.guessState = this.userDataContext.currentUser.lastScore.split('');
+      this.played = true;
+      this.endGame();
+      return;
+    }
+
+    this.gameOver = false;
 
     const iFrameScript = document.createElement('script');
     iFrameScript.src='https://open.spotify.com/embed-podcast/iframe-api/v1';
@@ -119,8 +95,8 @@ export class PlayerComponent implements OnInit {
     window.onSpotifyIframeApiReady = (IFrameAPI) => {
       const element = document.getElementById('embed-iframe');
       const options = {
-        width: 1,
-        height: 1,
+        width: 0,
+        height: 0,
         uri: `spotify:track:${this.todaysSong.id}`,
         allow:'autoplay'
       };
@@ -173,7 +149,20 @@ export class PlayerComponent implements OnInit {
       IFrameAPI.createController(element, options, callback);
       this.playerLoaded = true;
 
+      const element2 = document.getElementById('embed-iframe-2');
+          const options2 = {
+            width: 400,
+            height: 200,
+            uri: `spotify:track:${this.todaysSong.id}`
+          };
+          // @ts-ignore
+          const callback2 = (EmbedController) => {
+            EmbedController.addListener('ready', () => {
+              EmbedController.play();
+            })
+          };
 
+        IFrameAPI.createController(element2, options2, callback2);
     };
   }
 
@@ -270,27 +259,34 @@ export class PlayerComponent implements OnInit {
     var finalScore = this.currentGuess + 1;
     this.gameOverText = finalScore == 0 ? "Try again tomorrow!" : "Winner winner!";
 
-    // if(!this.playerLoaded)
-    //   this.createIFrame();
-    // @ts-ignore
-    window.onSpotifyIframeApiReady = (IFrameAPI) => {
-      const element2 = document.getElementById('embed-iframe-2');
-        const options2 = {
-          width: 400,
-          height: 200,
-          uri: `spotify:track:${this.todaysSong.id}`
-        };
-        // @ts-ignore
-        const callback2 = (EmbedController) => {
-          EmbedController.addListener('ready', () => {
-            EmbedController.play();
-          })
-        };
+    if(this.played) {
+      const iFrameScript = document.createElement('script');
+      iFrameScript.src='https://open.spotify.com/embed-podcast/iframe-api/v1';
+      iFrameScript.addEventListener('load', (e) => {
+        console.log(e);
+      });
+      document.head.appendChild(iFrameScript);
 
-      //IFrameAPI.createController(element2, options2, callback2);
+    // @ts-ignore
+      window.onSpotifyIframeApiReady = (IFrameAPI) => {
+        const element2 = document.getElementById('embed-iframe-2');
+          const options2 = {
+            width: 400,
+            height: 200,
+            uri: `spotify:track:${this.todaysSong.id}`
+          };
+          // @ts-ignore
+          const callback2 = (EmbedController) => {
+            EmbedController.addListener('ready', () => {
+              EmbedController.play();
+            })
+          };
+
+        IFrameAPI.createController(element2, options2, callback2);
+      }
     }
 
-    this.allUsers.forEach(u => {
+    this.userDataContext.allUsers.forEach(u => {
       if(u.uid == this.currentUserID) {
         u.lastPlayed = this.today();
         u.lastScore = this.displayGuessState();
@@ -306,7 +302,7 @@ export class PlayerComponent implements OnInit {
       }
     })
 
-    this.songDataService.replaceUsers(this.allUsers as UserData[]);
+    this.songDataService.replaceUsers(this.userDataContext.allUsers as UserData[]);
   }
 
   displayTime(time:number):string {
