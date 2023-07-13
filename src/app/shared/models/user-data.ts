@@ -1,5 +1,4 @@
 export interface UserData {
-  uname:string;
   uid:string;
   lastPlayed:string;
   lastScore:string;
