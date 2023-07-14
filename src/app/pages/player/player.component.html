@@ -18,10 +18,6 @@
       </mat-button-toggle-group>
 
       <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
-
-      <!-- <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessStateCopy()">
-        <mat-icon>content_copy</mat-icon>
-      </button> -->
     </form>
 
     <div>
@@ -30,23 +26,25 @@
     </div>
   </div>
 
-  <div *ngIf="gameOver">
-    <b>{{this.gameOverText}}</b>
-  </div>
+  <div class="gameOver" *ngIf="gameOver">
+    <div >
+      <b>{{this.gameOverText}}</b>
+    </div>
 
-  <div *ngIf="gameOver">
-    <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
+    <div>
+      <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
 
-    <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessStateCopy()">
-      <mat-icon>content_copy</mat-icon>
-    </button>
+      <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessStateCopy()">
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </div>
+
+    <div [ngStyle]="{display: gameOver ? 'block' : 'none'}">
+      <div id="embed-iframe-2"></div>
+    </div>
   </div>
 
   <div id="embed-iframe" [ngStyle]="{display: gameOver ? 'block' : 'none'}" ></div>
-
-  <div [ngStyle]="{display: gameOver ? 'block' : 'none'}">
-    <div id="embed-iframe-2"></div>
-  </div>
 
   <div *ngIf="!gameOver" class="gameSpace">
     <mat-list (click)="selectSong(song)" class="list-item" *ngFor="let song of filteredSongs; last as last">
@@ -57,7 +55,7 @@
       <mat-divider *ngIf="!last"></mat-divider>
     </mat-list>
   </div>
-  <div class="media-footer">
+  <div class="media-footer" [ngStyle]="{display: !gameOver ? 'block' : 'none'}">
     <mat-toolbar color="primary">
       <mat-toolbar-row>
         <span>{{ this.displayTime(currentTime) }}</span>
