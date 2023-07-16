@@ -151,7 +151,7 @@ export class PlayerComponent implements OnInit {
 
       const element2 = document.getElementById('embed-iframe-2');
           const options2 = {
-            width: 400,
+            width: 380,
             height: 200,
             uri: `spotify:track:${this.todaysSong.id}`
           };
@@ -270,7 +270,7 @@ export class PlayerComponent implements OnInit {
       window.onSpotifyIframeApiReady = (IFrameAPI) => {
         const element2 = document.getElementById('embed-iframe-2');
           const options2 = {
-            width: 400,
+            width: 380,
             height: 200,
             uri: `spotify:track:${this.todaysSong.id}`
           };
