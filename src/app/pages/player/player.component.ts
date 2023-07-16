@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, NgZone, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@auth0/auth0-angular';
 import { firstValueFrom, map } from 'rxjs';
@@ -7,6 +7,7 @@ import { Song } from 'src/app/shared/models/song';
 import { SongLog } from 'src/app/shared/models/song-log';
 import { UserData, UserDataContext } from 'src/app/shared/models/user-data';
 import { SongDataService } from './song-data.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-player',
@@ -40,7 +41,8 @@ export class PlayerComponent implements OnInit {
   gameOver:boolean = true;
   gameOverText:string = ""
 
-  constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder, private auth: AuthService){
+  constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder,
+              private auth: AuthService, @Inject(DOCUMENT) private doc: Document){
     this.guessForm = this.fb.group({
       'guessText':["", [Validators.required, Validators.pattern('[a-zA-Z0-9 ."=]*$')]]
     });
@@ -71,6 +73,14 @@ export class PlayerComponent implements OnInit {
 
   async loadUser(){
     this.currentUserID = await firstValueFrom(this.user$.pipe(map((user: any) => { return user.sub; })));
+
+    if(!this.currentUserID.includes("|")) {
+      this.auth.logout({
+        logoutParams: {
+          returnTo: this.doc.location.origin + "/heardle2",
+        },
+      });
+    }
 
     this.userDataContext = await firstValueFrom(this.songDataService.getAllUsers(this.currentUserID));
   }
