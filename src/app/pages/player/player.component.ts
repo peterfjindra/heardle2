@@ -257,7 +257,7 @@ export class PlayerComponent implements OnInit {
   endGame(){
     this.gameOver = true;
     var finalScore = this.currentGuess + 1;
-    this.gameOverText = finalScore == 0 ? "Try again tomorrow!" : "Winner winner!";
+    this.gameOverText = this.displayGuessState().includes('🟩') ? "Winner winner!" : "Try again tomorrow!";
 
     if(this.played) {
       const iFrameScript = document.createElement('script');
