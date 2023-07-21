@@ -13,5 +13,6 @@ export class ProfileComponent {
 
   code$ = this.user$.pipe(map((user) => JSON.stringify(user, null, 2)));
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService) {
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, NgZone, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@auth0/auth0-angular';
 import { firstValueFrom, map } from 'rxjs';
@@ -55,6 +55,16 @@ export class PlayerComponent implements OnInit {
       });
   }
 
+  @HostListener('document:visibilitychange', ['$event'])
+  appVisibility() {
+    if (document.hidden) {
+    }
+    else {
+      if(!(this.todaysSong && this.currentUserID)) {
+        this.initData();
+      }
+    }
+  }
 
   ngOnInit(): void {
     this.initData();
