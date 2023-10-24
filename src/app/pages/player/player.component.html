@@ -1,9 +1,10 @@
+<mat-toolbar color="primary" class="main-toolbar">
+  <span>Heardle 2</span>
+  <span class="example-spacer"></span>
+  <logout-button></logout-button>
+</mat-toolbar>
+
 <div class="container">
-  <mat-toolbar color="primary" class="main-toolbar">
-    <span>Heardle 2</span>
-    <span class="example-spacer"></span>
-    <logout-button></logout-button>
-  </mat-toolbar>
   <div *ngIf="!gameOver" class="gameInfo">
     <form style="display: inline-block;" *ngIf="guessForm" [formGroup]="guessForm">
       <mat-form-field subscriptSizing="dynamic" style="margin-right: 5px;">
@@ -53,23 +54,24 @@
       <mat-divider *ngIf="!last"></mat-divider>
     </mat-list>
   </div>
-  <div class="media-footer" [ngStyle]="{display: !gameOver ? 'block' : 'none'}">
-    <mat-toolbar color="primary">
-      <mat-toolbar-row>
-        <span>{{ this.displayTime(currentTime) }}</span>
-        <mat-progress-bar mode="determinate" [value]="(currentTime / currentMaxTime()) * 100"
-          color="accent"></mat-progress-bar>
-        <span>{{ this.displayTime(this.currentMaxTime()) }}</span>
-      </mat-toolbar-row>
-      <mat-toolbar-row class="media-action-bar">
-        <button mat-button (click)="play()" *ngIf="!playing" class="custom-play-button">
-          <mat-icon mat-list-icon>play_circle_filled</mat-icon>
-        </button>
+</div>
 
-        <button mat-button (click)="stop()" *ngIf="playing">
-          <mat-icon mat-list-icon>square</mat-icon>
-        </button>
-      </mat-toolbar-row>
-    </mat-toolbar>
-  </div>
+<div class="media-footer" [ngStyle]="{display: !gameOver ? 'block' : 'none'}">
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span>{{ this.displayTime(currentTime) }}</span>
+      <mat-progress-bar mode="determinate" [value]="(currentTime / currentMaxTime()) * 100"
+        color="accent"></mat-progress-bar>
+      <span>{{ this.displayTime(this.currentMaxTime()) }}</span>
+    </mat-toolbar-row>
+    <mat-toolbar-row class="media-action-bar">
+      <button mat-button (click)="play()" *ngIf="!playing" class="custom-play-button">
+        <mat-icon mat-list-icon>play_circle_filled</mat-icon>
+      </button>
+
+      <button mat-button (click)="stop()" *ngIf="playing">
+        <mat-icon mat-list-icon>square</mat-icon>
+      </button>
+    </mat-toolbar-row>
+  </mat-toolbar>
 </div>
