@@ -43,6 +43,9 @@
 
   <div [ngStyle]="{display: gameOver ? 'block' : 'none'}">
     <div id="embed-iframe-2"></div>
+    <div><h2> Your Rolling Average: </h2>
+        <h1>{{this.rollingAverage}}</h1>
+      </div>
   </div>
 
   <div *ngIf="!gameOver" class="gameSpace">
