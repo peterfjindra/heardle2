@@ -39,10 +39,10 @@ export class PlayerComponent implements OnInit {
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
 
-  gameOver:boolean = true;
+  gameOver:boolean = false;
   gameOverText:string = ""
 
-  rollingAverage: number = 0;
+  rollingAverage: string = "0";
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder,
               private auth: AuthService, @Inject(DOCUMENT) private doc: Document){
@@ -334,7 +334,7 @@ export class PlayerComponent implements OnInit {
 
     
   }
-  computeRollingAverage(scores:Scores) : number{
+  computeRollingAverage(scores:Scores){
     var finalAvg = 0;
     var totalSum = 0;
     totalSum += scores[0] * 7;
@@ -348,7 +348,9 @@ export class PlayerComponent implements OnInit {
     var numGames = scores[0] + scores[1] + scores[2] + scores[3] + scores[4] + scores[5] + scores[6];
     var finalAvg = totalSum / numGames;
 
-    return finalAvg;
+    var finalAvgStr = finalAvg.toFixed(4);
+
+    return finalAvgStr;
   }
 
   displayTime(time:number):string {
