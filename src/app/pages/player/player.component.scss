@@ -14,6 +14,10 @@
   }
 }
 
+.section {
+  margin: auto;
+}
+
 .main-toolbar {
   height: 10%;
   .spacer {
@@ -66,4 +70,14 @@
       font-size: 48px !important;
     }
   }
+}
+
+h1 {
+  font-family:'Avenir Book, Arial';
+}
+h3 {
+  font-family:'Avenir Book, Arial';
+}
+h2 {
+  font-family:'Avenir Medium, Arial';
 }

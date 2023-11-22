@@ -27,11 +27,11 @@
     </div>
   </div>
 
-  <div *ngIf="gameOver">
+  <div class="section" *ngIf="gameOver">
     <b>{{this.gameOverText}}</b>
   </div>
 
-  <div *ngIf="gameOver">
+  <div class="section" *ngIf="gameOver">
     <h1 style="display: inline-block; margin-bottom: 0px;">{{this.displayGuessState()}}</h1>
 
     <button style="display: inline-block;" mat-icon-button [cdkCopyToClipboard]="this.displayGuessStateCopy()">
@@ -41,8 +41,12 @@
 
   <div id="embed-iframe" [ngStyle]="{display: gameOver ? 'block' : 'none'}" ></div>
 
-  <div [ngStyle]="{display: gameOver ? 'block' : 'none'}">
-    <div id="embed-iframe-2"></div>
+  <div class="section" [ngStyle]="{display: gameOver ? 'block' : 'none'}">
+    <div class="section" id="embed-iframe-2"></div>
+    <div>
+      <h3 style="text-align:center"> Your Rolling Average: </h3>
+      <h1 style="text-align:center">{{this.rollingAverage}}</h1>
+    </div>
   </div>
 
   <div *ngIf="!gameOver" class="gameSpace">

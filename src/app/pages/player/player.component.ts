@@ -5,9 +5,10 @@ import { firstValueFrom, map } from 'rxjs';
 import { AudioStream } from 'rxjs-audio';
 import { Song } from 'src/app/shared/models/song';
 import { SongLog } from 'src/app/shared/models/song-log';
-import { UserData, UserDataContext } from 'src/app/shared/models/user-data';
+import { Scores, UserData, UserDataContext } from 'src/app/shared/models/user-data';
 import { SongDataService } from './song-data.service';
 import { DOCUMENT } from '@angular/common';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-player',
@@ -38,8 +39,10 @@ export class PlayerComponent implements OnInit {
   selectedSong:Song = {artist:"a song", title:"Please select", id:"dummy"} as Song;
   guessState:string[] = ["⬜️","⬜️","⬜️","⬜️","⬜️","⬜️"];
 
-  gameOver:boolean = true;
+  gameOver:boolean = false;
   gameOverText:string = ""
+
+  rollingAverage: string = "0";
 
   constructor(private _ngZone: NgZone, private songDataService:SongDataService, private fb:UntypedFormBuilder,
               private auth: AuthService, @Inject(DOCUMENT) private doc: Document){
@@ -305,23 +308,49 @@ export class PlayerComponent implements OnInit {
       }
     }
 
+    var scores = [];
     this.userDataContext.allUsers.forEach(u => {
       if(u.uid == this.currentUserID) {
-        u.lastPlayed = this.today();
-        u.lastScore = this.displayGuessState();
-        switch(finalScore) {
-          case 0: u.scores[0]++; break;
-          case 1: u.scores[1]++; break;
-          case 2: u.scores[2]++; break;
-          case 3: u.scores[3]++; break;
-          case 4: u.scores[4]++; break;
-          case 5: u.scores[5]++; break;
-          case 6: u.scores[6]++; break;
+        if(u.lastPlayed != this.today()){
+          u.lastPlayed = this.today();
+          u.lastScore = this.displayGuessState();
+          switch(finalScore) {
+            case 0: u.scores[0]++; break;
+            case 1: u.scores[1]++; break;
+            case 2: u.scores[2]++; break;
+            case 3: u.scores[3]++; break;
+            case 4: u.scores[4]++; break;
+            case 5: u.scores[5]++; break;
+            case 6: u.scores[6]++; break;
+          }
         }
+        
+
+        this.rollingAverage = this.computeRollingAverage(u.scores);
       }
     })
 
     this.songDataService.replaceUsers(this.userDataContext.allUsers as UserData[]);
+
+    
+  }
+  computeRollingAverage(scores:Scores){
+    var finalAvg = 0;
+    var totalSum = 0;
+    totalSum += scores[0] * 7;
+    totalSum += scores[1] * 1;
+    totalSum += scores[2] * 2;
+    totalSum += scores[3] * 3;
+    totalSum += scores[4] * 4;
+    totalSum += scores[5] * 5;
+    totalSum += scores[6] * 6;
+
+    var numGames = scores[0] + scores[1] + scores[2] + scores[3] + scores[4] + scores[5] + scores[6];
+    var finalAvg = totalSum / numGames;
+
+    var finalAvgStr = finalAvg.toFixed(4);
+
+    return finalAvgStr;
   }
 
   displayTime(time:number):string {
